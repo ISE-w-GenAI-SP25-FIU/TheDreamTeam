@@ -1,8 +1,11 @@
-# TODO: Replace with your team name
+The Dream Team
 
 ## Our Team
 
-TODO: Replace with your team members
+Eric Brletic
+Jernai Bennett
+Alain Figueroa
+Euikyun Ko
 
 ## How to run the streamlit app
 
@@ -14,7 +17,7 @@ Make sure you have installed the correct packages.
 $ pip install -r requirements.txt
 ```
 
-Change into this directory. You can check that you're in the correct directory by running `ls`. 
+Change into this directory. You can check that you're in the correct directory by running `ls`.
 You should see the correct files printed out.
 
 ```shell
@@ -36,7 +39,7 @@ $ streamlit run app.py
 Docker simply creates a virtual environment for only your app. This is what we will use to
 deploy our app continuously.
 
-Fortunately, we already have a script that builds and starts Docker for us. Run the 
+Fortunately, we already have a script that builds and starts Docker for us. Run the
 following command to build the container and start the server locally.
 
 ```shell
@@ -48,8 +51,8 @@ $ ./run-streamlit.sh
 The GitHub Actions are already mostly configured for you. They are split
 into two files:
 
-* `.github/workflows/cloud-run.yml`: workflow for automatic deployment
-* `.github/workflows/python-checks.yml`: workflow for continuous integration (testing)
+- `.github/workflows/cloud-run.yml`: workflow for automatic deployment
+- `.github/workflows/python-checks.yml`: workflow for continuous integration (testing)
 
 You won't need to modify `python-checks` at all, but you will need to change
 the environment variables in `cloud-run.yml` to work for your team's GCP project.
@@ -58,23 +61,23 @@ the environment variables in `cloud-run.yml` to work for your team's GCP project
 
 First, deploy your project manually from the command line.
 
-1. Set up your Google Cloud Project by following the "Before you begin" section of 
-http://cloud/run/docs/quickstarts/build-and-deploy/deploy-python-service?hl=en.
+1. Set up your Google Cloud Project by following the "Before you begin" section of
+   http://cloud/run/docs/quickstarts/build-and-deploy/deploy-python-service?hl=en.
 
-2. Build the image using the following command, replacing the project ID and service 
-name with your info. Your service name is the name of your webapp or project and can 
-be whatever you want!
+2. Build the image using the following command, replacing the project ID and service
+   name with your info. Your service name is the name of your webapp or project and can
+   be whatever you want!
 
 ```shell
-gcloud builds submit --tag gcr.io/PROJECT_ID/SERVICE_NAME
+gcloud builds submit --tag gcr.io/dreamteamproject-449421/my-ai-shoe-starter
 ```
 
 3. Deploy the image that you just built. If successful, you should see a URL in the
-output on the command-line. Follow the link and you should see your app!
+   output on the command-line. Follow the link and you should see your app!
 
 ```shell
-gcloud run deploy SERVICE_NAME \
-    --image gcr.io/PROJECT_ID/SERVICE_NAME:latest \
+gcloud run deploy my-ai-shoe-starter \
+    --image gcr.io/dreamteamproject-449421/my-ai-shoe-starter:latest \
     --region us-central1 \
     --allow-unauthenticated
 ```
@@ -83,65 +86,65 @@ gcloud run deploy SERVICE_NAME \
 
 After a successful deployment, we can modify the `./github/workflows/cloud-run.yml`
 file. Additional information on each step is in the [documentation](https://github.com/google-github-actions/auth?tab=readme-ov-file#workload-identity-federation-through-a-service-account)
- but you should be able to follow the steps below.
+but you should be able to follow the steps below.
 
 1. Create a Workload Identity Pool and a Provider for GitHub. Replace `GITHUB_ORG` with the name of the GitHub org for your class. This should be before your repository name in the URL for your GitHub repository.
 
 ```shell
 gcloud iam workload-identity-pools create "github" \
-    --project="PROJECT_ID" \
+    --project="dreamteamproject-449421" \
     --location="global" \
     --display-name="GitHub Actions Pool"
 
 gcloud iam workload-identity-pools providers create-oidc "project-repo" \
-    --project="PROJECT_ID" \
+    --project="dreamteamproject-449421" \
     --location="global" \
     --workload-identity-pool="github" \
     --display-name="My GitHub repo Provider" \
     --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository,attribute.repository_owner=assertion.repository_owner" \
-    --attribute-condition="assertion.repository_owner == 'GITHUB_ORG'" \
+    --attribute-condition="assertion.repository_owner == 'ISE-w-GenAI-SP25-FIU'" \
     --issuer-uri="https://token.actions.githubusercontent.com"
 ```
 
 3. Get the full path name for the Workload Identity Provider from gcloud.
-You will use the output from this command as the `WORKLOAD_IDENTITY_PROVIDER` 
-field in `.github/workflows/cloud-run.yml`.
+   You will use the output from this command as the `WORKLOAD_IDENTITY_PROVIDER`
+   field in `.github/workflows/cloud-run.yml`.
 
 ```shell
 gcloud iam workload-identity-pools providers describe "project-repo" \
-    --project="PROJECT_ID" \
+    --project="dreamteamproject-449421" \
     --location="global" \
     --workload-identity-pool="github" \
     --format="value(name)"
 ```
 
 4. Authorize your service account. Use the output from the first command as the
-`WORKLOAD_IDENTITY_POOL_ID` in the second command, and your team's GitHub repo
-name as the `GITHUB_REPO_NAME`. Also replace `GITHUB_ORG` with the name of the GitHub org, same as in step 1.
+   `WORKLOAD_IDENTITY_POOL_ID` in the second command, and your team's GitHub repo
+   name as the `GITHUB_REPO_NAME`. Also replace `GITHUB_ORG` with the name of the GitHub org, same as in step 1.
 
 ```shell
 gcloud iam workload-identity-pools describe "github" \
-  --project="PROJECT_ID" \
+  --project="dreamteamproject-449421" \
   --location="global" \
   --format="value(name)"
 ```
 
 ```shell
-gcloud iam service-accounts add-iam-policy-binding "PROJECT_NUMBER-compute@developer.gserviceaccount.com" \
-  --project="PROJECT_ID" \
+gcloud iam service-accounts add-iam-policy-binding "86677331641-compute@developer.gserviceaccount.com" \
+  --project="dreamteamproject-449421" \
   --role="roles/iam.workloadIdentityUser" \
-  --member="principalSet://iam.googleapis.com/WORKLOAD_IDENTITY_POOL_ID/attribute.repository/GITHUB_ORG/GITHUB_REPO_NAME"
+  --member="principalSet://iam.googleapis.com/projects/86677331641/locations/global/workloadIdentityPools/github/attribute.repository/ISE-w-GenAI-SP25-FIU/TheDreamTeam"
 ```
 
-4. In IAM in the Cloud Console, double check that the following roles are attached 
-to the service account.
+4.  In IAM in the Cloud Console, double check that the following roles are attached
+    to the service account.
 
-    - Cloud Build Service Agent
-    - Cloud Run Admin
-    - Service Account User
-    - Workload Identity User
+        - Cloud Build Service Agent
+        - Cloud Run Admin
+        - Service Account User
+        - Workload Identity User
 
-5. Update the environmental variables (all of the TODOs) in 
-`.github/workflows/cloud-run.yml`, commit and push your changes, 
-and click on "Actions" in your team's repository on GitHub to see
-the workflow running!
+5.  Update the environmental variables (all of the TODOs) in
+    `.github/workflows/cloud-run.yml`, commit and push your changes,
+    and click on "Actions" in your team's repository on GitHub to see
+    the workflow running!
