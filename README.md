@@ -3,6 +3,7 @@ The Dream Team
 ## Our Team
 
 Eric Brletic
+Alain Figueroa
 
 ## How to run the streamlit app
 
