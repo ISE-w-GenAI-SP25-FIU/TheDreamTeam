@@ -3,9 +3,6 @@ The Dream Team
 ## Our Team
 
 Eric Brletic
-Jernai Bennett
-Alain Figueroa
-Euikyun Ko
 
 ## How to run the streamlit app
 
