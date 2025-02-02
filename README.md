@@ -4,6 +4,7 @@ The Dream Team
 
 Eric Brletic
 Alain Figueroa
+Euikyun Ko
 
 ## How to run the streamlit app
 
