@@ -2,6 +2,7 @@ The Dream Team
 
 ## Our Team
 
+Jernai Bennett
 Eric Brletic
 Alain Figueroa
 Euikyun Ko
