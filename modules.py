@@ -41,9 +41,19 @@ def display_activity_summary(workouts_list):
 
 def display_recent_workouts(workouts_list):
     """Write a good docstring here."""
+    data = {
+        'WORKOUTS' : workouts_list,
+        
+    }
+
+    html_file_name = "workouts_page"
+    create_component(data, html_file_name)
+
     pass
 
 
 def display_genai_advice(timestamp, content, image):
     """Write a good docstring here."""
+
+    
     pass
