@@ -1,0 +1,72 @@
+<!-- CSS -->
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+    .genai-advice-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 2px solid #ddd;
+        border-radius: 20px;
+        padding: 15px 20px;
+        max-width: fit-content;
+        margin: 20px auto;
+        background: linear-gradient(135deg, #ffffff, #f7f7f7);
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.08);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .genai-advice-container h2 {
+        margin: 0;
+        padding-bottom: 8px;
+        font-size: 22px;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .genai-advice-container p {
+        margin: 0;
+        padding: 5px 0;
+        font-size: 15px;
+        font-weight: 400;
+        color: #444;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    .genai-advice-container img {
+        max-width: 220px;
+        height: auto;
+        display: block;
+        margin-top: 12px;
+        border-radius: 12px;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.06);
+    }
+</style>
+
+<!-- HTML -->
+<div class="genai-advice-container">
+    <h2>GenAI Advice</h2>
+    <p>{{ADVICE}}</p>
+    <p>{{TIMESTAMP}}</p>
+</div>
+
+
+<!-- JavaScript -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const imageUrl = "{{IMAGE}}";
+        if (imageUrl.trim()) {
+            const imgElement = document.createElement("img");
+            imgElement.src = imageUrl;
+            imgElement.alt = "Motivational Image";
+            
+            imgElement.onerror = function () {
+                this.remove();
+            };
+
+            document.querySelector(".genai-advice-container").appendChild(imgElement);
+        }
+    });
+</script>
+

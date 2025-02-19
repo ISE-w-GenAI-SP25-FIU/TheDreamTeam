@@ -33,6 +33,10 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
 
     def test_foo(self):
         """Tests foo."""
+        at = AppTest.from_file("app.py")
+        at.run()
+    
+        print(f'Text: {at.text_area[0]}')
         pass
 
 
