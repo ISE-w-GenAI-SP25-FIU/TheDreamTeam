@@ -46,6 +46,7 @@ def display_recent_workouts(workouts_list):
 
 
 def display_genai_advice(timestamp, content, image):
+    from internals import create_component
     """Displays the most recent motivational advice from the genai model,
     including text, timestamp, and an optional image.
 
@@ -61,5 +62,3 @@ def display_genai_advice(timestamp, content, image):
 
     html_file_name = "display_genai_advice"
     create_component(data, html_file_name, 1000)
-
-    pass
