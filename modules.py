@@ -35,8 +35,49 @@ def display_post(username, user_image, timestamp, content, post_image):
 
 
 def display_activity_summary(workouts_list):
-    """Write a good docstring here."""
-    pass
+    """
+    Input: A list of workouts 
+    Workouts contain information for start and end timestamps, 
+    distance, steps, calories burned, start and end coordinates
+    
+    Output: None
+
+    Example:
+    if workouts_list = ['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400],
+    
+    Start Time: 1:31:29
+    End Time: 3:46:38
+    Distance: 4
+    Start Coordinates: (25.745178, -80.366124)
+    End Coordinates: (25.728228, -80.270986)
+    Steps: 15000
+    Calories burned: 400
+    """
+
+    st.title("Workout Summary")
+    st.markdown('Work out fun!!!!! :joy:')
+
+    # [start_time, end_time, distance, steps, calories burned, start_coordinates, end_coordinates]
+    # if workouts_list = ['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400]
+    # then, test_logic(workouts_list) returns ['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400]
+    # thus, list = ['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400]
+    
+    # It's hard to perform Unit Testing in Streamlit components like st.write() or st.button()
+    # So, test_logic function can be tested independently from the Streamlit components 
+    # to indirectly make sure input data and output data match 
+    
+    list = test_logic(workouts_list)
+
+    st.write("- Start Time: ", f"{list[0]}")
+    st.write(f"- End Time: {list[1]}")
+    st.write(f"- Distance: {list[2]}")
+    st.write(f"- Start Coordinates: {list[3]}")
+    st.write(f"- End Coordinates: {list[4]}")
+    st.write(f"- Steps: {list[5]}")
+    st.write(f"- Calories burned: {list[6]}")
+
+def test_logic(workouts_list):
+    return workouts_list
 
 
 def display_recent_workouts(workouts_list):
