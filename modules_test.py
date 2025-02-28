@@ -133,7 +133,7 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             )
             valid_image_line = {f'<img src="{image}" width="200">' for image in image_options}
             actual_line = at.markdown[1].value.strip().split('\n')[4].strip()
-            assert actual_line in valid_image_line or actual_line is ""
+            assert actual_line in valid_image_line or actual_line == ""
 
 class TestDisplayRecentWorkouts(unittest.TestCase):
     """Tests the display_recent_workouts function."""
