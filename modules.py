@@ -92,9 +92,46 @@ def display_recent_workouts(workouts_list):
 
     pass
 
-
 def display_genai_advice(timestamp, content, image):
-    """Write a good docstring here."""
+    """Displays the most recent motivational advice from the GenAI model,
+    including text, timestamp, and an optional image.
 
-    
-    pass
+    timestamp: Date and time of GenAI advice
+    content: Randomly selected motivational advice text
+    image: Either a random motivational image or None
+    """
+    import streamlit as st
+
+    st.markdown(
+        """
+        <style>
+        .genai-advice {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background-color: #f0f0f0;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+            padding: 15px;
+            width: 60%;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        f"""
+        <div class="genai-advice">
+            <h2>GenAI Advice</h2>
+            <p>{content}</p>
+            <p><em>{timestamp}</em></p>
+            {'<img src="' + image + '" width="200">' if image else ''}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
