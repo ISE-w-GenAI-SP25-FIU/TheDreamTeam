@@ -84,19 +84,6 @@ def display_activity_summary(workouts_list):
 def test_logic(workouts_list):
     return workouts_list
 
-
-def display_recent_workouts(workouts_list):
-    """Write a good docstring here."""
-    data = {
-        'WORKOUTS' : workouts_list,
-        
-    }
-
-    html_file_name = "workouts_page"
-    create_component(data, html_file_name)
-
-    pass
-
 def display_genai_advice(timestamp, content, image):
     """Displays the most recent motivational advice from the GenAI model,
     including text, timestamp, and an optional image.
