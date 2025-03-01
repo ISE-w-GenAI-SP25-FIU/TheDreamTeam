@@ -25,6 +25,10 @@ def display_app_page():
         workout_data = get_user_workouts(userId)
         display_activity_summary(workout_data)
 
+    #Recent Workouts Display
+    st.markdown("---")
+    workout_data = get_user_workouts(userId)
+    display_recent_workouts(workout_data)
 
 # This is the starting point for your app. You do not need to change these lines
 if __name__ == '__main__':

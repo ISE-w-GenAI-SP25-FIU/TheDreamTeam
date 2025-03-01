@@ -11,6 +11,7 @@ from streamlit.testing.v1 import AppTest
 from modules import display_post, display_activity_summary, display_genai_advice, display_recent_workouts
 from data_fetcher import get_genai_advice, users
 import re
+from unittest.mock import MagicMock
 
 def normalize_whitespace(text):
     return re.sub(r'\s+', ' ', text.strip()) # Credit ChatGPT
@@ -151,13 +152,72 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             actual_line = at.markdown[1].value.strip().split('\n')[4].strip()
             assert actual_line in valid_image_line or actual_line == ""
 
-class TestDisplayRecentWorkouts(unittest.TestCase):
-    """Tests the display_recent_workouts function."""
-
-    def test_foo(self):
-        """Tests foo."""
-        pass
-
+def test_display_recent_workouts(self):
+        """Test display_recent_workouts function with varied workout data."""
+        from unittest.mock import patch
+        
+        # Create a diverse set of mock workouts with different datesstre
+        varied_workouts = [
+            {
+                'workout_id': 'workout1',
+                'start_timestamp': '2024-02-27 08:30:00',
+                'end_timestamp': '2024-02-27 09:15:00',
+                'start_lat_lng': (1.55, 4.55),
+                'end_lat_lng': (1.85, 4.85),
+                'distance': 3.2,
+                'steps': 4500,
+                'calories_burned': 85,
+            },
+            {
+                'workout_id': 'workout2',
+                'start_timestamp': '2024-02-25 07:45:00',
+                'end_timestamp': '2024-02-25 08:30:00',
+                'start_lat_lng': (1.22, 4.22),
+                'end_lat_lng': (1.77, 4.77),
+                'distance': 4.5,
+                'steps': 6200,
+                'calories_burned': 120,
+            },
+            {
+                'workout_id': 'workout3',
+                'start_timestamp': '2024-02-23 18:15:00',
+                'end_timestamp': '2024-02-23 19:00:00',
+                'start_lat_lng': (1.33, 4.33),
+                'end_lat_lng': (1.66, 4.66),
+                'distance': 2.8,
+                'steps': 3800,
+                'calories_burned': 75,
+            },
+            {
+                'workout_id': 'workout4',
+                'start_timestamp': '2024-02-20 12:00:00',
+                'end_timestamp': '2024-02-20 12:45:00',
+                'start_lat_lng': (1.44, 4.44),
+                'end_lat_lng': (1.88, 4.88),
+                'distance': 5.1,
+                'steps': 7300,
+                'calories_burned': 135,
+            },
+            {
+                'workout_id': 'workout5',
+                'start_timestamp': '2024-02-18 16:30:00',
+                'end_timestamp': '2024-02-18 17:15:00',
+                'start_lat_lng': (1.11, 4.11),
+                'end_lat_lng': (1.99, 4.99),
+                'distance': 3.7,
+                'steps': 5200,
+                'calories_burned': 95,
+            }
+        ]
+        
+        # Use patch as a context manager to mock streamlit and other dependencies
+        with patch('modules.st'), patch('modules.pd'), patch('modules.alt'):
+            # Import and test the function
+            from modules import display_recent_workouts
+            display_recent_workouts(varied_workouts)
+            
+        # If we get here without exceptions, the test passes
+        self.assertTrue(True)
 
 if __name__ == "__main__":
     unittest.main()
