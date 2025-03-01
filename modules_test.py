@@ -38,7 +38,8 @@ class TestDisplayActivitySummary(unittest.TestCase):
     to indirectly make sure input data and output data match 
     
     """
-    def test_foo(self):
+    def test_activity_summary(self):
+        from modules import test_logic
         self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[0], '1:31:29')
         self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[1], '3:46:38')
         self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[2], 4)
