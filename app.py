@@ -11,15 +11,19 @@ from data_fetcher import get_user_posts, get_genai_advice, get_user_profile, get
 import random
 
 userId = random.choice(list(users.keys()))
-print(userId)
-
 
 def display_app_page():
     """Displays the home page of the app."""
-    st.title('Welcome to SDS!')
+    st.set_page_config(layout="wide")
+    st.title('TheDreamTeam')
 
-    advice_data = get_genai_advice(userId)
-    display_genai_advice(advice_data['timestamp'], advice_data['content'], advice_data['image'])
+    col1, col2 = st.columns(2, gap="small")
+    with col1:
+        advice_data = get_genai_advice(userId)
+        display_genai_advice(advice_data['timestamp'], advice_data['content'], advice_data['image'])
+    with col2:
+        workout_data = get_user_workouts(userId)
+        display_activity_summary(workout_data)
 
 
 # This is the starting point for your app. You do not need to change these lines

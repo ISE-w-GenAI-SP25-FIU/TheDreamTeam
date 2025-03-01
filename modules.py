@@ -67,14 +67,15 @@ def display_activity_summary(workouts_list):
     # to indirectly make sure input data and output data match 
     
     list = test_logic(workouts_list)
-
-    st.write("- Start Time: ", f"{list[0]}")
-    st.write(f"- End Time: {list[1]}")
-    st.write(f"- Distance: {list[2]}")
-    st.write(f"- Start Coordinates: {list[3]}")
-    st.write(f"- End Coordinates: {list[4]}")
-    st.write(f"- Steps: {list[5]}")
-    st.write(f"- Calories burned: {list[6]}")
+    for index, workout in enumerate(list):
+        st.subheader(f"Workout #{index + 1}")
+        st.write("- Start Time: ", f"{workout["start_timestamp"]}")
+        st.write(f"- End Time: {workout["end_timestamp"]}")
+        st.write(f"- Distance: {workout["distance"]}")
+        st.write(f"- Start Coordinates: {workout["start_lat_lng"]}")
+        st.write(f"- End Coordinates: {workout["end_lat_lng"]}")
+        st.write(f"- Steps: {workout["steps"]}")
+        st.write(f"- Calories burned: {workout["calories_burned"]}")
 
 def test_logic(workouts_list):
     return workouts_list
