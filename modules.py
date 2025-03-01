@@ -69,7 +69,7 @@ def display_activity_summary(workouts_list):
     list = test_logic(workouts_list)
     for index, workout in enumerate(list):
         st.subheader(f"Workout #{index + 1}")
-        st.write("- Start Time: ", f"{workout["start_timestamp"]}")
+        st.write(f"- Start Time: {workout["start_timestamp"]}")
         st.write(f"- End Time: {workout["end_timestamp"]}")
         st.write(f"- Distance: {workout["distance"]}")
         st.write(f"- Start Coordinates: {workout["start_lat_lng"]}")
