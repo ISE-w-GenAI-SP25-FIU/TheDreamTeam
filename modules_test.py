@@ -152,7 +152,7 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             actual_line = at.markdown[1].value.strip().split('\n')[4].strip()
             assert actual_line in valid_image_line or actual_line == ""
 
-def test_display_recent_workouts(self):
+    def test_display_recent_workouts(self): 
         """Test display_recent_workouts function with varied workout data."""
         from unittest.mock import patch
         
