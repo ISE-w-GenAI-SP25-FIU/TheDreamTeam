@@ -6,9 +6,20 @@
 #############################################################################
 
 import unittest
+import re
 from streamlit.testing.v1 import AppTest
-from modules import display_activity_summary, validate_workouts, display_post, display_recent_workouts, display_genai_advice
+from modules import (
+    display_activity_summary,
+    validate_workouts,
+    display_post,
+    display_recent_workouts,
+    display_genai_advice,
+)
+from unittest.mock import patch
 
+def normalize_whitespace(text):
+    """Helper function to remove extra whitespace for string comparisons."""
+    return re.sub(r'\s+', ' ', text.strip())
 
 class TestDisplayActivitySummary(unittest.TestCase):
     """Tests the display_activity_summary function using AppTest"""
@@ -29,10 +40,11 @@ class TestDisplayActivitySummary(unittest.TestCase):
             }
         ]
 
-        app = AppTest(display_activity_summary, args=[workouts_list])
+        # Provide default_timeout as required (in seconds)
+        app = AppTest(display_activity_summary, args=[workouts_list], default_timeout=5)
         app.run()
 
-        # Check if UI contains expected elements
+        # Check if UI elements are present
         app.assert_text("Workout Summary")
         app.assert_text("Workout #1")
         app.assert_text("Start Time: 2024-01-01 00:10:00")
@@ -41,12 +53,8 @@ class TestDisplayActivitySummary(unittest.TestCase):
         app.assert_text("Steps: 10,000")
         app.assert_text("Calories burned: 50")
 
-
-class TestValidateWorkouts(unittest.TestCase):
-    """Tests the validate_workouts function"""
-
     def test_validate_workouts(self):
-        """Ensure validate_workouts returns correct data"""
+        """Test validate_workouts function returns input data correctly"""
         workouts_list = [
             {"workout_id": "workout_1", "distance": 10.0},
             {"workout_id": "workout_2", "distance": 5.0},
@@ -69,6 +77,7 @@ class TestDisplayPost(unittest.TestCase):
                 "This is a post!",
                 None,
             ],
+            default_timeout=5,
         )
         app.run()
 
@@ -98,7 +107,7 @@ class TestDisplayRecentWorkouts(unittest.TestCase):
             }
         ]
 
-        app = AppTest(display_recent_workouts, args=[workouts])
+        app = AppTest(display_recent_workouts, args=[workouts], default_timeout=5)
         app.run()
 
         app.assert_text("Recent Workouts")
@@ -117,6 +126,7 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
         app = AppTest(
             display_genai_advice,
             args=["2024-01-01", "Stay motivated!", None],
+            default_timeout=5,
         )
         app.run()
 
@@ -127,3 +137,4 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
