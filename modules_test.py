@@ -37,16 +37,28 @@ class TestDisplayActivitySummary(unittest.TestCase):
     
     """
     def test_activity_summary(self):
+
+        workouts_list = [{'workout_id': f'workout 1}',
+                    'start_timestamp': '2024-01-01 00:10:00',
+                    'end_timestamp': '2024-01-01 00:20:00',
+                    'start_lat_lng': 7.77,
+                    'end_lat_lng': 8.88,
+                    'distance': 10.0,
+                    'steps': 10000,
+                    'calories_burned': 50,},
+                   {'workout_id': f'workout 2',
+                    'start_timestamp': '2024-02-01 00:00:00',
+                    'end_timestamp': '2024-02-01 00:30:00',
+                    'start_lat_lng': 1.11,
+                    'end_lat_lng': 2.22,
+                    'distance': 5.0,
+                    'steps': 1000,
+                    'calories_burned': 10,
+                   }]
+        
         from modules import test_logic
-        self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[0], '1:31:29')
-        self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[1], '3:46:38')
-        self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[2], 4)
-        self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[3], (25.745178, -80.366124))
-        self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[4], (25.728228, -80.270986))
-        self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[5], 15000)
-        self.assertEqual(test_logic(['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400])[6], 400)
-
-
+        self.assertEqual(test_logic(workouts_list), workouts_list)
+        
 class TestDisplayGenAiAdvice(unittest.TestCase):
     """Tests the display_genai_advice function."""
 
