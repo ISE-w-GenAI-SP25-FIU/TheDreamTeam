@@ -9,7 +9,7 @@
 
 from internals import create_component
 import streamlit as st
-import datetime
+from datetime import datetime
 import pandas as pd
 import altair as alt
 
