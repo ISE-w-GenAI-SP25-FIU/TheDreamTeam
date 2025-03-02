@@ -33,8 +33,13 @@ def display_my_custom_component(value):
 
 
 def display_post(username, user_image, timestamp, content, post_image):
-    """Write a good docstring here."""
-    pass
+    """Displays a user post with their profile image, timestamp, and content."""
+    st.markdown(f"### {username}")
+    st.image(user_image, width=50)
+    st.write(f"📅 {timestamp}")
+    st.write(content)
+    if post_image != 'image_url' and post_image is not None:
+        st.image(post_image, caption="Post Image")
 
 
 def display_activity_summary(workouts_list):
@@ -67,7 +72,7 @@ def display_activity_summary(workouts_list):
     }]
     """
 
-    st.title("Display Workout Summary")
+    st.header("Workout Summary")
     st.markdown("---")
 
     total_time = 0

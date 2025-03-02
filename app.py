@@ -15,13 +15,30 @@ userId = random.choice(list(users.keys()))
 def display_app_page():
     """Displays the home page of the app."""
     st.set_page_config(layout="wide")
-    st.title('TheDreamTeam')
+    st.title('Welcome to SDS!')
 
-    col1, col2 = st.columns(2, gap="small")
+    col1, col2, col3 = st.columns(3, gap="small")
     with col1:
         advice_data = get_genai_advice(userId)
         display_genai_advice(advice_data['timestamp'], advice_data['content'], advice_data['image'])
+
     with col2:
+        posts_data = get_user_posts(userId)
+
+        if not posts_data:
+            st.info("No posts available.")
+        else:
+            for post in posts_data:
+                print(post)
+                display_post(
+                    users[post['user_id']]['full_name'],  # Display user's full name
+                    users[post['user_id']]['profile_image'],  # User profile image
+                    post['timestamp'], 
+                    post['content'], 
+                    post['image']
+                )
+
+    with col3:
         workout_data = get_user_workouts(userId)
         display_activity_summary(workout_data)
 
