@@ -4,11 +4,11 @@ The Dream Team
 This project is a **Streamlit-based web application** designed to display AI-driven workout insights, user activity summaries, and motivational feedback. It integrates **Google Cloud Run** for deployment and follows best practices for **CI/CD automation** using GitHub Actions.
 
 Important Links & Resources
-- GitHub Repository: [TheDreamTeam Repo](https://github.com/ISE-w-GenAI-SP25-FIU/TheDreamTeam)
-- Project Documentation: [README.md](https://github.com/ISE-w-GenAI-SP25-FIU/TheDreamTeam/blob/main/README.md)
-- Google Cloud Run Guide: [Cloud Run Docs](https://cloud.google.com/run/docs)
-- Deployment Workflow: [GitHub Actions](https://github.com/google-github-actions/auth)
-- Streamlit Documentation: [Streamlit.io](https://docs.streamlit.io/)
+- GitHub Repository:https://github.com/ISE-w-GenAI-SP25-FIU/TheDreamTeam
+- Project Documentation: https://github.com/ISE-w-GenAI-SP25-FIU/TheDreamTeam/blob/main/README.md
+- Google Cloud Run Guide: https://cloud.google.com/run/docs
+- Deployment Workflow: https://github.com/google-github-actions/auth
+- Streamlit Documentation: https://docs.streamlit.io
 
 
 ## Our Team
