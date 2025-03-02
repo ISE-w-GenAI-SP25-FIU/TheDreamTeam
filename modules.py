@@ -4,7 +4,8 @@
 # This file contains modules that may be used throughout the app.
 #
 #############################################################################
-
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="altair")
 from internals import create_component
 import streamlit as st
 import datetime
