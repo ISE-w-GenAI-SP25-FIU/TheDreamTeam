@@ -38,23 +38,24 @@ class TestDisplayActivitySummary(unittest.TestCase):
     """
     def test_activity_summary(self):
 
-        workouts_list = [{'workout_id': f'workout 1}',
-                    'start_timestamp': '2024-01-01 00:10:00',
-                    'end_timestamp': '2024-01-01 00:20:00',
-                    'start_lat_lng': 7.77,
-                    'end_lat_lng': 8.88,
-                    'distance': 10.0,
-                    'steps': 10000,
-                    'calories_burned': 50,},
-                   {'workout_id': f'workout 2',
-                    'start_timestamp': '2024-02-01 00:00:00',
-                    'end_timestamp': '2024-02-01 00:30:00',
-                    'start_lat_lng': 1.11,
-                    'end_lat_lng': 2.22,
-                    'distance': 5.0,
-                    'steps': 1000,
-                    'calories_burned': 10,
-                   }]
+        workouts_list = [
+            {'workout_id': f'workout 1',
+            'start_timestamp': '2024-01-01 00:10:00',
+            'end_timestamp': '2024-01-01 00:20:00',
+            'start_lat_lng': 7.77,
+            'end_lat_lng': 8.88,
+            'distance': 10.0,
+            'steps': 10000,
+            'calories_burned': 50,},
+            {'workout_id': f'workout 2',
+            'start_timestamp': '2024-02-01 00:00:00',
+            'end_timestamp': '2024-02-01 00:30:00',
+            'start_lat_lng': 1.11,
+            'end_lat_lng': 2.22,
+            'distance': 5.0,
+            'steps': 1000,
+            'calories_burned': 10,
+            }]
         
         from modules import test_logic
         self.assertEqual(test_logic(workouts_list), workouts_list)
