@@ -54,12 +54,18 @@ class TestDisplayPost(unittest.TestCase):
     """Tests the display_post function."""
 
     @patch("streamlit.write")
-    def test_display_post(self, mock_write):
+    @patch("streamlit.image")  
+    def test_display_post(self, mock_image, mock_write):
         """Ensures the display_post function outputs expected text."""
-        display_post("John Doe", "user_img.jpg", "2024-01-01", "This is a post!", None)
+
+       
+        mock_profile_image = "https://example.com/sample-profile.jpg"
+
+        display_post("John Doe", mock_profile_image, "2024-01-01", "This is a post!", None)
 
         mock_write.assert_any_call("📅 2024-01-01")
         mock_write.assert_any_call("This is a post!")
+        mock_image.assert_any_call(mock_profile_image, width=50)  # Ensure image is being called correctly
 
 if __name__ == "__main__":
     unittest.main()
