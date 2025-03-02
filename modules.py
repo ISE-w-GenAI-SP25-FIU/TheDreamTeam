@@ -44,7 +44,7 @@ def display_activity_summary(workouts_list):
     distance, steps, calories burned, start and end coordinates
     
     Output: None
-
+    """
     st.title("Workout Summary")
     st.markdown('Work out fun!!!!! :joy:')
 
