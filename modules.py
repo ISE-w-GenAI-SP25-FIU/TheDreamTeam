@@ -44,19 +44,64 @@ def display_activity_summary(workouts_list):
     distance, steps, calories burned, start and end coordinates
     
     Output: None
+
+    Example:
+    workouts_list = [
+        {'workout_id': f'workout 1',
+        'start_timestamp': '2024-01-01 00:10:00',
+        'end_timestamp': '2024-01-01 00:20:00',
+        'start_lat_lng': 7.77,
+        'end_lat_lng': 8.88,
+        'distance': 10.0,
+        'steps': 10000,
+        'calories_burned': 50,},
+        
+        {'workout_id': f'workout 2',
+        'start_timestamp': '2024-02-01 00:00:00',
+        'end_timestamp': '2024-02-01 00:30:00',
+        'start_lat_lng': 1.11,
+        'end_lat_lng': 2.22,
+        'distance': 5.0,
+        'steps': 1000,
+        'calories_burned': 10,
+    }]
     """
-    st.title("Workout Summary")
-    st.markdown('Work out fun!!!!! :joy:')
+
+    st.title("Display Workout Summary")
+    st.markdown("---")
+
+    total_time = 0
+    total_distance = 0
+    total_steps = 0
+    total_calories_burned = 0
 
     for index, workout in enumerate(workouts_list):
-        st.subheader(f"Workout #{index + 1}")
-        st.write(f"- Start Time: {workout['start_timestamp']}")
-        st.write(f"- End Time: {workout['end_timestamp']}")
-        st.write(f"- Distance: {workout['distance']}")
-        st.write(f"- Start Coordinates: {workout['start_lat_lng']}")
-        st.write(f"- End Coordinates: {workout['end_lat_lng']}")
-        st.write(f"- Steps: {workout['steps']}")
-        st.write(f"- Calories burned: {workout['calories_burned']}")
+        # Convert the string timestamps to datetime objects
+        start_time = datetime.strptime(workouts_list[index]['start_timestamp'], '%Y-%m-%d %H:%M:%S')
+
+        end_time = datetime.strptime(workouts_list[index]['end_timestamp'], '%Y-%m-%d %H:%M:%S')
+
+        # Calculate the time difference in seconds
+        time_difference = end_time - start_time
+        total_seconds = time_difference.total_seconds()
+        
+        # Calculate the total time
+        total_time += total_seconds
+        total_distance += workouts_list[index]['distance']
+        total_steps += workouts_list[index]['steps']
+        total_calories_burned += workouts_list[index]['calories_burned']
+
+        # Extract hours, minutes, and seconds from the timedelta
+        hours = total_time // 3600
+        minutes = (total_time % 3600) // 60
+        seconds = total_time % 60
+
+    st.subheader("Total Workouts")
+    st.write(f"- Total Time: {hours} hours, {minutes} minutes, {seconds} seconds")
+    st.write(f"- Total Distance: {total_distance} miles")
+    st.write(f"- Total Steps: {total_steps} steps")
+    st.write(f"- Total Calories Burned: {total_calories_burned} cal")
+
 
 def display_genai_advice(timestamp, content, image):
     """Displays the most recent motivational advice from the GenAI model,
