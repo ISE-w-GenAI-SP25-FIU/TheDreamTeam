@@ -28,33 +28,50 @@ class TestDisplayActivitySummary(unittest.TestCase):
     Tests the display_activity_summary function
     """
     def test_display_activity_summary(self):
-        from modules import display_activity_summary 
 
+        from unittest import mock
+        from unittest.mock import patch
+        from modules import display_activity_summary 
+    
         # Define a list of messages to pass to the function  
         workouts_list = [
         {'workout_id': f'workout 1',
-        'start_timestamp': '2024-01-01 00:10:00',
-        'end_timestamp': '2024-01-01 00:20:00',
-        'start_lat_lng': 7.77,
-        'end_lat_lng': 8.88,
-        'distance': 10.0,
-        'steps': 10000,
-        'calories_burned': 50,},
-        {'workout_id': f'workout 2',
-        'start_timestamp': '2024-02-01 00:00:00',
-        'end_timestamp': '2024-02-01 00:30:00',
-        'start_lat_lng': 1.11,
-        'end_lat_lng': 2.22,
-        'distance': 5.0,
-        'steps': 1000,
-        'calories_burned': 10,
+            'start_timestamp': '2024-01-01 00:10:00',
+            'end_timestamp': '2024-01-01 00:20:00',
+            'start_lat_lng': 7.77,
+            'end_lat_lng': 8.88,
+            'distance': 10.0,
+            'steps': 10000,
+            'calories_burned': 50,},
+            {'workout_id': f'workout 2',
+            'start_timestamp': '2024-02-01 00:00:00',
+            'end_timestamp': '2024-02-01 00:30:00',
+            'start_lat_lng': 1.11,
+            'end_lat_lng': 2.22,
+            'distance': 5.0,
+            'steps': 1000,
+            'calories_burned': 10,
         }]
-
-        # Create an AppTest instance with the list argument
-        at = AppTest.from_function(display_activity_summary, args=(workouts_list,))
-        # Run the test
-        at.run()
-        assert not at.exception
+    
+        # Patch st.write and replace it with a mock object
+        with mock.patch('streamlit.write') as mock_write:
+            # Call the function that uses st.write multiple times
+            display_activity_summary(workouts_list)
+            
+            # Assert that st.write was called 3 times with the expected arguments
+            assert mock_write.call_count == 4
+            
+            # Check the first call
+            mock_write.assert_any_call("- Total Time: 0.0 hours, 40.0 minutes, 0.0 seconds")
+            
+            # Check the second call
+            mock_write.assert_any_call("- Total Distance: 15.0 miles")
+            
+            # Check the 3rd call
+            mock_write.assert_any_call("- Total Steps: 11000 steps")
+    
+            # Check the 4th call
+            mock_write.assert_any_call("- Total Calories Burned: 60 cal")
         
 class TestDisplayGenAiAdvice(unittest.TestCase):
     """Tests the display_genai_advice function."""
