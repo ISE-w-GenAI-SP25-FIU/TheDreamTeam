@@ -133,6 +133,13 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             actual_line = at.markdown[1].value.strip().split('\n')[2].strip()
             assert actual_line in {f"<p>{advice}</p>" for advice in advice_options}
 
+        # Test with no advice
+        at = AppTest.from_function(display_genai_advice, args=(None, None, None))
+        at.run()
+        assert not at.exception
+        actual_line = at.markdown[1].value.strip().split('\n')[2].strip()
+        assert actual_line == '<p>No advice today :(</p>'
+
     def test_timestamp_text(self):
         """Tests to ensure module contains a paragraph element with the timestamp."""
         for user in users.keys():
@@ -144,6 +151,13 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             actual_line = at.markdown[1].value.strip().split('\n')[3].strip()
             expected_line = '<p><em>2024-01-01 00:00:00</em></p>'
             assert actual_line == expected_line
+
+        # Test with no timestamp
+        at = AppTest.from_function(display_genai_advice, args=(None, None, None))
+        at.run()
+        assert not at.exception
+        actual_line = at.markdown[1].value.strip().split('\n')[3].strip()
+        assert actual_line == ''
 
     def test_motivational_image(self):
         """Tests to ensure module contains a paragraph element with the timestamp."""
