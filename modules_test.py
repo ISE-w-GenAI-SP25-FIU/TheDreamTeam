@@ -10,7 +10,7 @@ from streamlit.testing.v1 import AppTest
 from modules import display_activity_summary, validate_workouts, display_post, display_recent_workouts, display_genai_advice
 from unittest.mock import patch
 import re
-from modules import validate_workouts
+
 
 
 def normalize_whitespace(text):
