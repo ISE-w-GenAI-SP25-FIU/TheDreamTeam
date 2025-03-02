@@ -13,9 +13,6 @@ from data_fetcher import get_genai_advice, users
 import re
 from unittest.mock import MagicMock
 
-def normalize_whitespace(text):
-    return re.sub(r'\s+', ' ', text.strip()) # Credit ChatGPT
-
 # Write your tests below
 
 class TestDisplayPost(unittest.TestCase):
@@ -53,6 +50,9 @@ class TestDisplayActivitySummary(unittest.TestCase):
 class TestDisplayGenAiAdvice(unittest.TestCase):
     """Tests the display_genai_advice function."""
 
+    def normalize_whitespace(self, text):
+        return re.sub(r'\s+', ' ', text.strip()) # Credit ChatGPT
+
     def test_css_styling(self):
         """Tests to ensure CSS styling is consistent for every user entry."""
         for user in users.keys():
@@ -61,8 +61,8 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             at.run()
             assert not at.exception
 
-            actual_css = normalize_whitespace(at.markdown[0].value)
-            expected_css = normalize_whitespace("""
+            actual_css = self.normalize_whitespace(at.markdown[0].value)
+            expected_css = self.normalize_whitespace("""
             <style>
                 .genai-advice {
                     display: flex;
@@ -151,6 +151,9 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             valid_image_line = {f'<img src="{image}" width="200">' for image in image_options}
             actual_line = at.markdown[1].value.strip().split('\n')[4].strip()
             assert actual_line in valid_image_line or actual_line == ""
+
+class TestDisplayRecentWorkouts(unittest.TestCase):
+    """Tests the display_recent_workouts function."""
 
     def test_display_recent_workouts(self): 
         """Test display_recent_workouts function with varied workout data."""
