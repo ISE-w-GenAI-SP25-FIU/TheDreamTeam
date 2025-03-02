@@ -26,39 +26,35 @@ class TestDisplayPost(unittest.TestCase):
 class TestDisplayActivitySummary(unittest.TestCase):
     """
     Tests the display_activity_summary function
-
-    If workouts_list = ['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400]
-    then, test_logic(workouts_list) returns ['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400]
-    thus, list = ['1:31:29', '3:46:38', 4, (25.745178, -80.366124), (25.728228, -80.270986), 15000, 400]
-    
-    It's hard to perform Unit Testing in Streamlit components like st.write() or st.button()
-    So, test_logic function can be tested independently from the Streamlit components 
-    to indirectly make sure input data and output data match 
-    
     """
-    def test_activity_summary(self):
+    def test_display_activity_summary(self):
+        from modules import display_activity_summary 
 
+        # Define a list of messages to pass to the function  
         workouts_list = [
-            {'workout_id': f'workout 1',
-            'start_timestamp': '2024-01-01 00:10:00',
-            'end_timestamp': '2024-01-01 00:20:00',
-            'start_lat_lng': 7.77,
-            'end_lat_lng': 8.88,
-            'distance': 10.0,
-            'steps': 10000,
-            'calories_burned': 50,},
-            {'workout_id': f'workout 2',
-            'start_timestamp': '2024-02-01 00:00:00',
-            'end_timestamp': '2024-02-01 00:30:00',
-            'start_lat_lng': 1.11,
-            'end_lat_lng': 2.22,
-            'distance': 5.0,
-            'steps': 1000,
-            'calories_burned': 10,
-            }]
-        
-        from modules import test_logic
-        self.assertEqual(test_logic(workouts_list), workouts_list)
+        {'workout_id': f'workout 1',
+        'start_timestamp': '2024-01-01 00:10:00',
+        'end_timestamp': '2024-01-01 00:20:00',
+        'start_lat_lng': 7.77,
+        'end_lat_lng': 8.88,
+        'distance': 10.0,
+        'steps': 10000,
+        'calories_burned': 50,},
+        {'workout_id': f'workout 2',
+        'start_timestamp': '2024-02-01 00:00:00',
+        'end_timestamp': '2024-02-01 00:30:00',
+        'start_lat_lng': 1.11,
+        'end_lat_lng': 2.22,
+        'distance': 5.0,
+        'steps': 1000,
+        'calories_burned': 10,
+        }]
+
+        # Create an AppTest instance with the list argument
+        at = AppTest.from_function(display_activity_summary, args=(workouts_list,))
+        # Run the test
+        at.run()
+        assert not at.exception
         
 class TestDisplayGenAiAdvice(unittest.TestCase):
     """Tests the display_genai_advice function."""
