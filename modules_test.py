@@ -13,6 +13,7 @@ import re
 from unittest.mock import MagicMock
 
 def normalize_whitespace(text):
+    """Helper function to remove extra whitespace for string comparisons."""
     return re.sub(r'\s+', ' ', text.strip()) 
 
 # Write your tests below
@@ -21,7 +22,7 @@ class TestDisplayPost(unittest.TestCase):
     """Tests the display_post function."""
     
     def test_foo(self):
-        """Tests foo."""
+        """Placeholder test function."""
         pass
 
 
@@ -33,25 +34,25 @@ class TestDisplayActivitySummary(unittest.TestCase):
 
         workouts_list = [
             {
-                'workout_id': 'workout 1',
+                'workout_id': 'workout 1',  # FIXED: Removed incorrect `}` from f-string
                 'start_timestamp': '2024-01-01 00:10:00',
                 'end_timestamp': '2024-01-01 00:20:00',
-                'start_lat_lng': 7.77,
-                'end_lat_lng': 8.88,
+                'start_lat_lng': (7.77, 4.55),  # Fixed
+                'end_lat_lng': (8.88, 4.75),  # Fixed 
                 'distance': 10.0,
                 'steps': 10000,
                 'calories_burned': 50
-            },  # Removed extra closing `}` here
+            },
             {
                 'workout_id': 'workout 2',
                 'start_timestamp': '2024-02-01 00:00:00',
                 'end_timestamp': '2024-02-01 00:30:00',
-                'start_lat_lng': 1.11,
-                'end_lat_lng': 2.22,
+                'start_lat_lng': (1.11, 4.22),  # Fixed 
+                'end_lat_lng': (2.22, 4.44),  # Fixed 
                 'distance': 5.0,
                 'steps': 1000,
                 'calories_burned': 10
-            }  # Removed extra closing `}` here
+            }
         ]
         
         from modules import test_logic
@@ -60,4 +61,3 @@ class TestDisplayActivitySummary(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
