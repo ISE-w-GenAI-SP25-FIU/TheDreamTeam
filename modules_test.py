@@ -41,7 +41,7 @@ class TestDisplayActivitySummary(unittest.TestCase):
     """
     def test_activity_summary(self):
 
-        workouts_list = [{'workout_id': f'workout 1}',
+        workouts_list = [{'workout_id': f'workout 1'},
                     'start_timestamp': '2024-01-01 00:10:00',
                     'end_timestamp': '2024-01-01 00:20:00',
                     'start_lat_lng': 7.77,
