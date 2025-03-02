@@ -48,10 +48,7 @@ def display_activity_summary(workouts_list):
     st.title("Workout Summary")
     st.markdown('Work out fun!!!!! :joy:')
 
-    # test_logic function can be tested independently from the Streamlit components 
-    # to indirectly make sure input data and output data match 
-    list = test_logic(workouts_list)
-    for index, workout in enumerate(list):
+    for index, workout in enumerate(workouts_list):
         st.subheader(f"Workout #{index + 1}")
         st.write(f"- Start Time: {workout['start_timestamp']}")
         st.write(f"- End Time: {workout['end_timestamp']}")
@@ -60,9 +57,6 @@ def display_activity_summary(workouts_list):
         st.write(f"- End Coordinates: {workout['end_lat_lng']}")
         st.write(f"- Steps: {workout['steps']}")
         st.write(f"- Calories burned: {workout['calories_burned']}")
-
-def test_logic(workouts_list):
-    return workouts_list
 
 def display_genai_advice(timestamp, content, image):
     """Displays the most recent motivational advice from the GenAI model,
