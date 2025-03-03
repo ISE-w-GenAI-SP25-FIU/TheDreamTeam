@@ -33,11 +33,12 @@ def display_my_custom_component(value):
 
 
 def display_post(username, user_image, timestamp, content, post_image):
+    import streamlit as st
     """Displays a user post with their profile image, timestamp, and content."""
     st.markdown(f"### {username}")
     st.image(user_image, width=50)
-    st.write(f"📅 {timestamp}")
-    st.write(content)
+    st.markdown(f":calendar: {timestamp}")
+    st.text(content)
     if post_image != 'image_url' and post_image is not None:
         st.image(post_image, caption="Post Image")
 

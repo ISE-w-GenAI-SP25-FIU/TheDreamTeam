@@ -29,7 +29,6 @@ def display_app_page():
             st.info("No posts available.")
         else:
             for post in posts_data:
-                print(post)
                 display_post(
                     users[post['user_id']]['full_name'],  # Display user's full name
                     users[post['user_id']]['profile_image'],  # User profile image

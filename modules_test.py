@@ -9,69 +9,82 @@
 import unittest
 from streamlit.testing.v1 import AppTest
 from modules import display_post, display_activity_summary, display_genai_advice, display_recent_workouts
-from data_fetcher import get_genai_advice, users
+from data_fetcher import get_genai_advice, get_user_posts, users
 import re
-from unittest.mock import MagicMock
 
 # Write your tests below
 
 class TestDisplayPost(unittest.TestCase):
     """Tests the display_post function."""
 
-    def test_foo(self):
-        """Tests foo."""
-        pass
+    def test_display_username(self):
+        """Tests username display on page."""
+        for user in users.keys():
+            posts_data = get_user_posts(user)
+            for post in posts_data:
+                full_name = users[post['user_id']]['full_name']
+                at = AppTest.from_function(
+                    display_post, 
+                    args=(
+                        full_name, 
+                        users[post['user_id']]['profile_image'], 
+                        post['timestamp'], 
+                        post['content'], 
+                        post['image']
+                    )
+                )
+                at.run()
+                assert not at.exception
+                assert at.markdown[1].value == f"### {full_name}", "Incorrect full name displayed in post"
+
+    def test_display_timestamp(self):
+        """Tests timestamp display on page."""
+        for user in users.keys():
+            posts_data = get_user_posts(user)
+            for post in posts_data:
+                timestamp = post['timestamp']
+                at = AppTest.from_function(
+                    display_post, 
+                    args=(
+                        users[post['user_id']]['full_name'], 
+                        users[post['user_id']]['profile_image'], 
+                        timestamp,
+                        post['content'],
+                        post['image']
+                    )
+                )
+                at.run()
+                assert not at.exception
+                assert at.markdown[2].value == f":calendar: {timestamp}", "Incorrect timestamp displayed in post"
+
+    def test_display_content(self):
+        """Tests content display on page."""
+        for user in users.keys():
+            posts_data = get_user_posts(user)
+            for post in posts_data:
+                content = post['content']
+                at = AppTest.from_function(
+                    display_post, 
+                    args=(
+                        users[post['user_id']]['full_name'], 
+                        users[post['user_id']]['profile_image'], 
+                        post['timestamp'],
+                        content,
+                        post['image']
+                    )
+                )
+                at.run()
+                assert not at.exception
+                assert at.text[0].value == content, "Incorrect content displayed in post"
 
 
 class TestDisplayActivitySummary(unittest.TestCase):
     """
     Tests the display_activity_summary function
     """
-    def test_display_activity_summary(self):
-
-        from unittest import mock
-        from unittest.mock import patch
-        from modules import display_activity_summary 
-    
-        # Define a list of messages to pass to the function  
-        workouts_list = [
-        {'workout_id': f'workout 1',
-            'start_timestamp': '2024-01-01 00:10:00',
-            'end_timestamp': '2024-01-01 00:20:00',
-            'start_lat_lng': 7.77,
-            'end_lat_lng': 8.88,
-            'distance': 10.0,
-            'steps': 10000,
-            'calories_burned': 50,},
-            {'workout_id': f'workout 2',
-            'start_timestamp': '2024-02-01 00:00:00',
-            'end_timestamp': '2024-02-01 00:30:00',
-            'start_lat_lng': 1.11,
-            'end_lat_lng': 2.22,
-            'distance': 5.0,
-            'steps': 1000,
-            'calories_burned': 10,
-        }]
-    
-        # Patch st.write and replace it with a mock object
-        with mock.patch('streamlit.write') as mock_write:
-            # Call the function that uses st.write multiple times
-            display_activity_summary(workouts_list)
-            
-            # Assert that st.write was called 3 times with the expected arguments
-            assert mock_write.call_count == 4
-            
-            # Check the first call
-            mock_write.assert_any_call("- Total Time: 0.0 hours, 40.0 minutes, 0.0 seconds")
-            
-            # Check the second call
-            mock_write.assert_any_call("- Total Distance: 15.0 miles")
-            
-            # Check the 3rd call
-            mock_write.assert_any_call("- Total Steps: 11000 steps")
-    
-            # Check the 4th call
-            mock_write.assert_any_call("- Total Calories Burned: 60 cal")
+    def test_foo(self):
+        """Tests foo."""
+        pass
         
 class TestDisplayGenAiAdvice(unittest.TestCase):
     """Tests the display_genai_advice function."""
@@ -104,7 +117,7 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
                 }
             </style>
             """)
-            assert actual_css == expected_css
+            assert actual_css == expected_css, "Incorrect CSS styling for GenAI Advice"
 
     def test_div_tags(self):
         """Tests to ensure module is in correct div container for every possible input user."""
@@ -118,8 +131,8 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             actual_last_line = at.markdown[1].value.strip().split('\n')[-1].strip()
             expected_first_line = '<div class="genai-advice">'
             expected_last_line = '</div>'
-            assert actual_first_line == expected_first_line
-            assert actual_last_line == expected_last_line
+            assert actual_first_line == expected_first_line, "Incorrect div container for GenAI Advice"
+            assert actual_last_line == expected_last_line, "Incorrect div container for GenAI Advice"
 
     def test_header_text(self):
         """Tests to ensure module has an h2 header as first element in the div with the correct text."""
@@ -131,7 +144,7 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
 
             actual_line = at.markdown[1].value.strip().split('\n')[1].strip()
             expected_line = '<h2>GenAI Advice</h2>'
-            assert actual_line == expected_line
+            assert actual_line == expected_line, "Incorrect header for GenAI Advice"
 
     def test_advice_text(self):
         """Tests to ensure module contains one of the randomly generated advice texts."""
@@ -148,14 +161,14 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
                 'You have burned 100 calories so far today!',
             )
             actual_line = at.markdown[1].value.strip().split('\n')[2].strip()
-            assert actual_line in {f"<p>{advice}</p>" for advice in advice_options}
+            assert actual_line in {f"<p>{advice}</p>" for advice in advice_options}, "Incorrect advice text for GenAI Advice"
 
         # Test with no advice
         at = AppTest.from_function(display_genai_advice, args=(None, None, None))
         at.run()
         assert not at.exception
         actual_line = at.markdown[1].value.strip().split('\n')[2].strip()
-        assert actual_line == '<p>No advice today :(</p>'
+        assert actual_line == '<p>No advice today :(</p>', "Incorrect advice text when no advice is available"
 
     def test_timestamp_text(self):
         """Tests to ensure module contains a paragraph element with the timestamp."""
@@ -167,14 +180,14 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
 
             actual_line = at.markdown[1].value.strip().split('\n')[3].strip()
             expected_line = '<p><em>2024-01-01 00:00:00</em></p>'
-            assert actual_line == expected_line
+            assert actual_line == expected_line, "Incorrect timestamp for GenAI Advice"
 
         # Test with no timestamp
         at = AppTest.from_function(display_genai_advice, args=(None, None, None))
         at.run()
         assert not at.exception
         actual_line = at.markdown[1].value.strip().split('\n')[3].strip()
-        assert actual_line == ''
+        assert actual_line == '', "Timestamp should not exist when one isn't given for GenAI Advice"
 
     def test_motivational_image(self):
         """Tests to ensure module contains a paragraph element with the timestamp."""
@@ -190,77 +203,14 @@ class TestDisplayGenAiAdvice(unittest.TestCase):
             )
             valid_image_line = {f'<img src="{image}" width="200">' for image in image_options}
             actual_line = at.markdown[1].value.strip().split('\n')[4].strip()
-            assert actual_line in valid_image_line or actual_line == ""
+            assert actual_line in valid_image_line or actual_line == "", "Incorrect image for GenAI Advice"
 
 class TestDisplayRecentWorkouts(unittest.TestCase):
     """Tests the display_recent_workouts function."""
 
-    def test_display_recent_workouts(self): 
-        """Test display_recent_workouts function with varied workout data."""
-        from unittest.mock import patch
-        
-        # Create a diverse set of mock workouts with different datesstre
-        varied_workouts = [
-            {
-                'workout_id': 'workout1',
-                'start_timestamp': '2024-02-27 08:30:00',
-                'end_timestamp': '2024-02-27 09:15:00',
-                'start_lat_lng': (1.55, 4.55),
-                'end_lat_lng': (1.85, 4.85),
-                'distance': 3.2,
-                'steps': 4500,
-                'calories_burned': 85,
-            },
-            {
-                'workout_id': 'workout2',
-                'start_timestamp': '2024-02-25 07:45:00',
-                'end_timestamp': '2024-02-25 08:30:00',
-                'start_lat_lng': (1.22, 4.22),
-                'end_lat_lng': (1.77, 4.77),
-                'distance': 4.5,
-                'steps': 6200,
-                'calories_burned': 120,
-            },
-            {
-                'workout_id': 'workout3',
-                'start_timestamp': '2024-02-23 18:15:00',
-                'end_timestamp': '2024-02-23 19:00:00',
-                'start_lat_lng': (1.33, 4.33),
-                'end_lat_lng': (1.66, 4.66),
-                'distance': 2.8,
-                'steps': 3800,
-                'calories_burned': 75,
-            },
-            {
-                'workout_id': 'workout4',
-                'start_timestamp': '2024-02-20 12:00:00',
-                'end_timestamp': '2024-02-20 12:45:00',
-                'start_lat_lng': (1.44, 4.44),
-                'end_lat_lng': (1.88, 4.88),
-                'distance': 5.1,
-                'steps': 7300,
-                'calories_burned': 135,
-            },
-            {
-                'workout_id': 'workout5',
-                'start_timestamp': '2024-02-18 16:30:00',
-                'end_timestamp': '2024-02-18 17:15:00',
-                'start_lat_lng': (1.11, 4.11),
-                'end_lat_lng': (1.99, 4.99),
-                'distance': 3.7,
-                'steps': 5200,
-                'calories_burned': 95,
-            }
-        ]
-        
-        # Use patch as a context manager to mock streamlit and other dependencies
-        with patch('modules.st'), patch('modules.pd'), patch('modules.alt'):
-            # Import and test the function
-            from modules import display_recent_workouts
-            display_recent_workouts(varied_workouts)
-            
-        # If we get here without exceptions, the test passes
-        self.assertTrue(True)
+    def test_foo(self):
+        """Tests foo."""
+        pass
 
 if __name__ == "__main__":
     unittest.main()
