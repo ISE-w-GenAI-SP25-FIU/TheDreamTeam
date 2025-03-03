@@ -139,7 +139,7 @@ class TestDisplayActivitySummary(unittest.TestCase):
             assert hours >= 0, "Total hours shouldn't ever be negative"
             assert minutes >= 0, "Total minutes shouldn't ever be negative"
             assert seconds >= 0, "Total seconds shouldn't ever be negative"
-            assert at.text[0].value == f"- Total Time: {hours} hours, {minutes} minutes, {seconds} seconds", "Displayed total time is incorrect"
+            assert at.markdown[2].value == f"* Total Time: {hours} hours, {minutes} minutes, {seconds} seconds", "Displayed total time is incorrect"
 
     def test_total_distance(self):
         """Tests if total distance that is displayed is calculated correctly."""
@@ -153,7 +153,7 @@ class TestDisplayActivitySummary(unittest.TestCase):
             for index, workout in enumerate(workout_data):
                 total_distance += workout_data[index]['distance']
             assert total_distance >= 0, "Total distance shouldn't ever be negative"
-            assert at.text[1].value == f"- Total Distance: {total_distance} km", "Displayed total distance is incorrect"
+            assert at.markdown[3].value == f"* Total Distance: {total_distance} km", "Displayed total distance is incorrect"
 
     def test_total_steps(self):
         """Tests if total steps that are displayed is calculated correctly."""
@@ -167,7 +167,7 @@ class TestDisplayActivitySummary(unittest.TestCase):
             for index, workout in enumerate(workout_data):
                 total_steps += workout_data[index]['steps']
             assert total_steps >= 0, "Total steps shouldn't ever be negative"
-            assert at.text[2].value == f"- Total Steps: {total_steps} steps", "Displayed total steps is incorrect"
+            assert at.markdown[4].value == f"* Total Steps: {total_steps} steps", "Displayed total steps is incorrect"
 
     def test_total_calories_burned(self):
         """Tests if total calories burned that are displayed is calculated correctly."""
@@ -181,7 +181,7 @@ class TestDisplayActivitySummary(unittest.TestCase):
             for index, workout in enumerate(workout_data):
                 total_calories_burned += workout_data[index]['calories_burned']
             assert total_calories_burned >= 0, "Total calories shouldn't ever be negative"
-            assert at.text[3].value == f"- Total Calories Burned: {total_calories_burned} cal", "Displayed total calories burned is incorrect"
+            assert at.markdown[5].value == f"* Total Calories Burned: {total_calories_burned} cal", "Displayed total calories burned is incorrect"
         
 class TestDisplayGenAiAdvice(unittest.TestCase):
     """Tests the display_genai_advice function."""

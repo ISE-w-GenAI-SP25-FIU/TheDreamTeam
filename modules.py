@@ -104,10 +104,10 @@ def display_activity_summary(workouts_list):
         seconds = total_time % 60
 
     st.subheader("Total Workouts")
-    st.text(f"- Total Time: {hours} hours, {minutes} minutes, {seconds} seconds")
-    st.text(f"- Total Distance: {total_distance} km")
-    st.text(f"- Total Steps: {total_steps} steps")
-    st.text(f"- Total Calories Burned: {total_calories_burned} cal")
+    st.markdown(f"* Total Time: {hours} hours, {minutes} minutes, {seconds} seconds")
+    st.markdown(f"* Total Distance: {total_distance} km")
+    st.markdown(f"* Total Steps: {total_steps} steps")
+    st.markdown(f"* Total Calories Burned: {total_calories_burned} cal")
 
 
 def display_genai_advice(timestamp, content, image):
