@@ -370,7 +370,7 @@ class TestDisplayRecentWorkouts(unittest.TestCase):
             display_recent_workouts(varied_workouts)
             
         # If we get here without exceptions, the test passes
-        self.assertTrue(True)
+        self.assertTrue(True), "Error in unit test to display recent workouts"
 
 if __name__ == "__main__":
     unittest.main()

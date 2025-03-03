@@ -9,6 +9,8 @@
 
 from internals import create_component
 import streamlit as st
+import pandas as pd
+import altair as alt
 
 # This one has been written for you as an example. You may change it as wanted.
 def display_my_custom_component(value):
