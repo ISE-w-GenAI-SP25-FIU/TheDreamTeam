@@ -73,7 +73,6 @@ def display_activity_summary(workouts_list):
 
     st.header("Workout Summary")
     st.markdown("---")
-    print(workouts_list)
 
     total_time = 0
     total_distance = 0

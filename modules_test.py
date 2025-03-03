@@ -82,14 +82,103 @@ class TestDisplayActivitySummary(unittest.TestCase):
     """
     Tests the display_activity_summary function
     """
-    def test_foo(self):
-        """Tests foo."""
+    def test_header(self):
+        """Tests if header is displayed."""
         for user in users.keys():
             workout_data = get_user_workouts(user)
-            at = AppTest.from_function(display_activity_summary, args=(workout_data))
+            at = AppTest.from_function(display_activity_summary, args=(workout_data,))
             at.run()
-            #assert not at.exception
-            #assert at.markdown[1].value == f"### {full_name}", "Incorrect full name displayed in post"
+            assert not at.exception
+            assert at.header[0].value == "Workout Summary", "Displayed workout summary header is incorrect"
+
+    def test_divider(self):
+        """Tests if divider is displayed."""
+        for user in users.keys():
+            workout_data = get_user_workouts(user)
+            at = AppTest.from_function(display_activity_summary, args=(workout_data,))
+            at.run()
+            assert not at.exception
+            assert at.markdown[1].value == "---", "Displayed workout summary divider is incorrect"
+
+    def test_subheader(self):
+        """Tests if subheader is displayed."""
+        for user in users.keys():
+            workout_data = get_user_workouts(user)
+            at = AppTest.from_function(display_activity_summary, args=(workout_data,))
+            at.run()
+            assert not at.exception
+            assert at.subheader[0].value == "Total Workouts", "Displayed workout summary subheader is incorrect"
+
+    def test_total_time(self):
+        """Tests if total time that is displayed is calculated correctly."""
+        from datetime import datetime
+        for user in users.keys():
+            workout_data = get_user_workouts(user)
+            at = AppTest.from_function(display_activity_summary, args=(workout_data,))
+            at.run()
+            assert not at.exception
+
+            total_time = 0
+            for index, workout in enumerate(workout_data):
+                # Convert the string timestamps to datetime objects
+                start_time = datetime.strptime(workout_data[index]['start_timestamp'], '%Y-%m-%d %H:%M:%S')
+
+                end_time = datetime.strptime(workout_data[index]['end_timestamp'], '%Y-%m-%d %H:%M:%S')
+
+                # Calculate the time difference in seconds
+                time_difference = end_time - start_time
+                total_seconds = time_difference.total_seconds()
+                
+                # Calculate the total time
+                total_time += total_seconds
+
+                # Extract hours, minutes, and seconds from the timedelta
+                hours = total_time // 3600
+                minutes = (total_time % 3600) // 60
+                seconds = total_time % 60
+            assert at.text[0].value == f"- Total Time: {hours} hours, {minutes} minutes, {seconds} seconds", "Displayed total time is incorrect"
+
+    def test_total_distance(self):
+        """Tests if total distance that is displayed is calculated correctly."""
+        for user in users.keys():
+            workout_data = get_user_workouts(user)
+            at = AppTest.from_function(display_activity_summary, args=(workout_data,))
+            at.run()
+            assert not at.exception
+
+            total_distance = 0
+            for index, workout in enumerate(workout_data):
+                total_distance += workout_data[index]['distance']
+
+            assert at.text[1].value == f"- Total Distance: {total_distance} km", "Displayed total distance is incorrect"
+
+    def test_total_steps(self):
+        """Tests if total steps that are displayed is calculated correctly."""
+        for user in users.keys():
+            workout_data = get_user_workouts(user)
+            at = AppTest.from_function(display_activity_summary, args=(workout_data,))
+            at.run()
+            assert not at.exception
+
+            total_steps = 0
+            for index, workout in enumerate(workout_data):
+                total_steps += workout_data[index]['steps']
+
+            assert at.text[2].value == f"- Total Steps: {total_steps} steps", "Displayed total steps is incorrect"
+
+    def test_total_calories_burned(self):
+        """Tests if total calories burned that are displayed is calculated correctly."""
+        for user in users.keys():
+            workout_data = get_user_workouts(user)
+            at = AppTest.from_function(display_activity_summary, args=(workout_data,))
+            at.run()
+            assert not at.exception
+
+            total_calories_burned = 0
+            for index, workout in enumerate(workout_data):
+                total_calories_burned += workout_data[index]['calories_burned']
+
+            assert at.text[3].value == f"- Total Calories Burned: {total_calories_burned} cal", "Displayed total calories burned is incorrect"
         
 class TestDisplayGenAiAdvice(unittest.TestCase):
     """Tests the display_genai_advice function."""
