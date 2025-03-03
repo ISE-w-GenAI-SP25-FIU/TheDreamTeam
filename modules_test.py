@@ -9,7 +9,7 @@
 import unittest
 from streamlit.testing.v1 import AppTest
 from modules import display_post, display_activity_summary, display_genai_advice, display_recent_workouts
-from data_fetcher import get_genai_advice, get_user_posts, users
+from data_fetcher import get_genai_advice, get_user_posts, get_user_workouts, users
 import re
 
 # Write your tests below
@@ -84,7 +84,12 @@ class TestDisplayActivitySummary(unittest.TestCase):
     """
     def test_foo(self):
         """Tests foo."""
-        pass
+        for user in users.keys():
+            workout_data = get_user_workouts(user)
+            at = AppTest.from_function(display_activity_summary, args=(workout_data))
+            at.run()
+            #assert not at.exception
+            #assert at.markdown[1].value == f"### {full_name}", "Incorrect full name displayed in post"
         
 class TestDisplayGenAiAdvice(unittest.TestCase):
     """Tests the display_genai_advice function."""

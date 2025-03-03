@@ -8,10 +8,6 @@
 #############################################################################
 
 from internals import create_component
-import streamlit as st
-from datetime import datetime
-import pandas as pd
-import altair as alt
 
 # This one has been written for you as an example. You may change it as wanted.
 def display_my_custom_component(value):
@@ -44,6 +40,8 @@ def display_post(username, user_image, timestamp, content, post_image):
 
 
 def display_activity_summary(workouts_list):
+    import streamlit as st
+    from datetime import datetime
     """
     Input: A list of workouts 
     Workouts contain information for start and end timestamps, 
@@ -75,6 +73,7 @@ def display_activity_summary(workouts_list):
 
     st.header("Workout Summary")
     st.markdown("---")
+    print(workouts_list)
 
     total_time = 0
     total_distance = 0
@@ -103,10 +102,10 @@ def display_activity_summary(workouts_list):
         seconds = total_time % 60
 
     st.subheader("Total Workouts")
-    st.write(f"- Total Time: {hours} hours, {minutes} minutes, {seconds} seconds")
-    st.write(f"- Total Distance: {total_distance} miles")
-    st.write(f"- Total Steps: {total_steps} steps")
-    st.write(f"- Total Calories Burned: {total_calories_burned} cal")
+    st.text(f"- Total Time: {hours} hours, {minutes} minutes, {seconds} seconds")
+    st.text(f"- Total Distance: {total_distance} km")
+    st.text(f"- Total Steps: {total_steps} steps")
+    st.text(f"- Total Calories Burned: {total_calories_burned} cal")
 
 
 def display_genai_advice(timestamp, content, image):

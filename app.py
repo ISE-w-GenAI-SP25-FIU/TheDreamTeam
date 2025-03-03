@@ -11,6 +11,7 @@ from data_fetcher import get_user_posts, get_genai_advice, get_user_profile, get
 import random
 
 userId = random.choice(list(users.keys()))
+workout_data = get_user_workouts(userId)
 
 def display_app_page():
     """Displays the home page of the app."""
@@ -38,12 +39,10 @@ def display_app_page():
                 )
 
     with col3:
-        workout_data = get_user_workouts(userId)
         display_activity_summary(workout_data)
 
     #Recent Workouts Display
     st.markdown("---")
-    workout_data = get_user_workouts(userId)
     display_recent_workouts(workout_data)
 
 # This is the starting point for your app. You do not need to change these lines
