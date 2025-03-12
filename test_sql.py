@@ -1,5 +1,6 @@
 from google.cloud import bigquery
 
+# required field for authentication
 project_id = "dreamteamproject-449421"
 
 client = bigquery.Client(project=project_id)
