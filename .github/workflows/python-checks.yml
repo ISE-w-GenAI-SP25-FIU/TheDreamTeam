@@ -32,14 +32,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
-    # Use the same authentication method as Cloud Run (Workload Identity Federation)
+
+    # Authenticate to Google Cloud using Workload Identity Federation (do not use credentials_json)
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v2
       with:
-        project_id: "${{ secrets.GCP_PROJECT_ID }}"  # Your project ID in secrets
-        workload_identity_provider: "${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}"  # The workload identity provider
-        service_account: "${{ secrets.SERVICE_ACCOUNT }}"  # The service account used for the workload identity
+        project_id: "${{ secrets.GCP_PROJECT_ID }}"  # The Google Cloud Project ID secret
+        workload_identity_provider: "${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}"  # Workload identity provider secret
+        service_account: "${{ secrets.SERVICE_ACCOUNT }}"  # Service account secret
 
     - name: Install dependencies
       run: |
