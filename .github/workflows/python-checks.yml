@@ -42,6 +42,19 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
+    # Authorize GitHub to connect to Google Cloud
+    - name: "Authorize GitHub to connect to Google Cloud"
+      uses: "google-github-actions/auth@v2"
+      with:
+        project_id: "${{ secrets.GCP_PROJECT_ID }}"
+        workload_identity_provider: "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+        service_account: "${{ secrets.GCP_SERVICE_ACCOUNT }}"
+
+    # Set Application Default Credentials
+    - name: "Set Application Default Credentials"
+      run: gcloud auth application-default login
+
     - name: Test with pytest
       run: |
         pytest
