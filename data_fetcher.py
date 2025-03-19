@@ -13,36 +13,7 @@ from google.cloud import bigquery
 
 PROJECT_ID = "dreamteamproject-449421"
 
-users = {
-    'user1': {
-        'full_name': 'Remi',
-        'username': 'remi_the_rems',
-        'date_of_birth': '1990-01-01',
-        'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
-        'friends': ['user2', 'user3', 'user4'],
-    },
-    'user2': {
-        'full_name': 'Blake',
-        'username': 'blake',
-        'date_of_birth': '1990-01-01',
-        'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
-        'friends': ['user1'],
-    },
-    'user3': {
-        'full_name': 'Jordan',
-        'username': 'jordanjordanjordan',
-        'date_of_birth': '1990-01-01',
-        'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
-        'friends': ['user1', 'user4'],
-    },
-    'user4': {
-        'full_name': 'Gemmy',
-        'username': 'gems',
-        'date_of_birth': '1990-01-01',
-        'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
-        'friends': ['user1', 'user3'],
-    },
-}
+users = ("user1", "user2", "user3")
 
 
 def get_user_sensor_data(user_id, workout_id):

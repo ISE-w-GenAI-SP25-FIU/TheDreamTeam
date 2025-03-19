@@ -10,8 +10,7 @@ from modules import display_my_custom_component, display_post, display_genai_adv
 from data_fetcher import get_user_posts, get_genai_advice, get_user_profile, get_user_sensor_data, get_user_workouts, users
 import random
 
-#userId = random.choice(list(users.keys()))
-userId = "user3"
+userId = random.choice(users)
 workout_data = get_user_workouts(userId)
 
 def display_app_page():
