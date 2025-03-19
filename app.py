@@ -10,7 +10,8 @@ from modules import display_my_custom_component, display_post, display_genai_adv
 from data_fetcher import get_user_posts, get_genai_advice, get_user_profile, get_user_sensor_data, get_user_workouts, users
 import random
 
-userId = random.choice(list(users.keys()))
+#userId = random.choice(list(users.keys()))
+userId = "user3"
 workout_data = get_user_workouts(userId)
 
 def display_app_page():
@@ -30,13 +31,19 @@ def display_app_page():
             st.info("No posts available.")
         else:
             for post in posts_data:
-                display_post(
-                    users[post['user_id']]['full_name'],  # Display user's full name
-                    users[post['user_id']]['profile_image'],  # User profile image
-                    post['timestamp'], 
-                    post['content'], 
-                    post['image']
-                )
+                user_profile = get_user_profile(post['user_id'])  # Fetch user details
+
+                if user_profile:  # Ensure user profile exists
+                    display_post(
+                        user_profile['full_name'],  # Get full name
+                        user_profile['profile_image'],  # Get profile image
+                        post['timestamp'], 
+                        post['content'], 
+                        post['image']
+                    )
+                else:
+                    st.warning(f"User {post['user_id']} not found.")  # Handle missing user
+
 
     with col3:
         display_activity_summary(workout_data)

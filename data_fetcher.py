@@ -9,6 +9,9 @@
 #############################################################################
 
 import random
+from google.cloud import bigquery
+
+PROJECT_ID = "dreamteamproject-449421"
 
 users = {
     'user1': {
@@ -95,34 +98,86 @@ def get_user_workouts(user_id):
         })
     return workouts
 
-
 def get_user_profile(user_id):
-    """Returns information about the given user.
+    """Returns a user's profile information including a list of friend user IDs."""
 
-    This function currently returns random data. You will re-write it in Unit 3.
+    client = bigquery.Client(project=PROJECT_ID)
+
+    # Query for user details
+    user_query = """
+        SELECT Name, Username, DateOfBirth, ImageUrl
+        FROM `ise-w-genai.CIS4993.Users`
+        WHERE UserId = @user_id
     """
-    if user_id not in users:
-        raise ValueError(f'User {user_id} not found.')
-    return users[user_id]
 
+    user_job = client.query(user_query, job_config=bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
+        ]
+    ))
+
+    user_rows = list(user_job.result())  # Convert iterator to a list
+    user_row = user_rows[0] if user_rows else None  # Get first row if exists
+
+    if not user_row:
+        return None  # User not found
+
+    # Query for friends (considering both UserId1 and UserId2)
+    friends_query = """
+        SELECT 
+            CASE 
+                WHEN UserId1 = @user_id THEN UserId2
+                ELSE UserId1
+            END AS FriendId
+        FROM `ise-w-genai.CIS4993.Friends`
+        WHERE UserId1 = @user_id OR UserId2 = @user_id
+    """
+
+    friends_job = client.query(friends_query, job_config=bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
+        ]
+    ))
+
+    friends_list = [row.FriendId for row in friends_job.result()]
+
+    # Return user profile dictionary
+    return {
+        'full_name': user_row.Name,
+        'username': user_row.Username,
+        'date_of_birth': user_row.DateOfBirth.strftime('%Y-%m-%d'),
+        'profile_image': user_row.ImageUrl,
+        'friends': friends_list
+    }
 
 def get_user_posts(user_id):
-    """Returns a list of a user's posts.
-
-    This function currently returns random data. You will re-write it in Unit 3.
+    """Returns a list of posts for a specific user."""
+    
+    client = bigquery.Client(project=PROJECT_ID)  # Create a new BigQuery client
+    
+    QUERY = """
+        SELECT PostId, AuthorId, Timestamp, ImageUrl, Content
+        FROM `ise-w-genai.CIS4993.Posts`
+        WHERE AuthorId = @user_id
+        ORDER BY Timestamp DESC
     """
-    content = random.choice([
-        'Had a great workout today!',
-        'The AI really motivated me to push myself further, I ran 10 miles!',
-    ])
-    return [{
-        'user_id': user_id,
-        'post_id': 'post1',
-        'timestamp': '2024-01-01 00:00:00',
-        'content': content,
-        'image': 'image_url',
-    }]
+    
+    # Use parameterized queries to prevent SQL injection
+    query_job = client.query(QUERY, job_config=bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
+        ]
+    ))
 
+    rows = query_job.result()
+
+    return [{
+        'user_id': row.AuthorId,
+        'post_id': row.PostId,
+        'timestamp': row.Timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        'content': row.Content,
+        'image': row.ImageUrl,
+    } for row in rows]
 
 def get_genai_advice(user_id):
     """Returns the most recent advice from the genai model.
@@ -139,6 +194,7 @@ def get_genai_advice(user_id):
         'https://plus.unsplash.com/premium_photo-1669048780129-051d670fa2d1?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         None,
     ])
+
     return {
         'advice_id': 'advice1',
         'timestamp': '2024-01-01 00:00:00',

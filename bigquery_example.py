@@ -1,8 +1,8 @@
 from google.cloud import bigquery
 
-project_id = "dreamteamproject-449421"
+PROJECT_ID = "dreamteamproject-449421"
 
-client = bigquery.Client(project=project_id)
+client = bigquery.Client(project=PROJECT_ID)
 
 QUERY = 'SELECT * from `ise-w-genai.CIS4993.Posts`'
 query_job = client.query(QUERY)
