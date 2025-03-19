@@ -10,10 +10,35 @@
 
 import random
 from google.cloud import bigquery
+import vertexai
+from vertexai.generative_models import GenerativeModel
+from datetime import datetime
 
 PROJECT_ID = "dreamteamproject-449421"
 
-users = ("user1", "user2", "user3")
+users = {
+    'user1': {
+        'full_name': 'Remi',
+        'username': 'remi_the_rems',
+        'date_of_birth': '1990-01-01',
+        'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
+        'friends': ['user2', 'user3', 'user4'],
+    },
+    'user2': {
+        'full_name': 'Blake',
+        'username': 'blake',
+        'date_of_birth': '1990-01-01',
+        'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
+        'friends': ['user1'],
+    },
+    'user3': {
+        'full_name': 'Jordan',
+        'username': 'jordanjordanjordan',
+        'date_of_birth': '1990-01-01',
+        'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
+        'friends': ['user1', 'user4'],
+    },
+}
 
 
 def get_user_sensor_data(user_id, workout_id):
@@ -74,13 +99,12 @@ def get_user_profile(user_id):
 
     client = bigquery.Client(project=PROJECT_ID)
 
-    # Query for user details
     user_query = """
         SELECT Name, Username, DateOfBirth, ImageUrl
         FROM `ise-w-genai.CIS4993.Users`
         WHERE UserId = @user_id
     """
-
+    # Use parameterized queries to prevent SQL injection - Credit ChatGPT
     user_job = client.query(user_query, job_config=bigquery.QueryJobConfig(
         query_parameters=[
             bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
@@ -91,9 +115,8 @@ def get_user_profile(user_id):
     user_row = user_rows[0] if user_rows else None  # Get first row if exists
 
     if not user_row:
-        return None  # User not found
+        return None
 
-    # Query for friends (considering both UserId1 and UserId2)
     friends_query = """
         SELECT 
             CASE 
@@ -103,7 +126,7 @@ def get_user_profile(user_id):
         FROM `ise-w-genai.CIS4993.Friends`
         WHERE UserId1 = @user_id OR UserId2 = @user_id
     """
-
+    # Use parameterized queries to prevent SQL injection - Credit ChatGPT
     friends_job = client.query(friends_query, job_config=bigquery.QueryJobConfig(
         query_parameters=[
             bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
@@ -112,7 +135,6 @@ def get_user_profile(user_id):
 
     friends_list = [row.FriendId for row in friends_job.result()]
 
-    # Return user profile dictionary
     return {
         'full_name': user_row.Name,
         'username': user_row.Username,
@@ -124,7 +146,7 @@ def get_user_profile(user_id):
 def get_user_posts(user_id):
     """Returns a list of posts for a specific user."""
     
-    client = bigquery.Client(project=PROJECT_ID)  # Create a new BigQuery client
+    client = bigquery.Client(project=PROJECT_ID)
     
     QUERY = """
         SELECT PostId, AuthorId, Timestamp, ImageUrl, Content
@@ -133,7 +155,7 @@ def get_user_posts(user_id):
         ORDER BY Timestamp DESC
     """
     
-    # Use parameterized queries to prevent SQL injection
+    # Use parameterized queries to prevent SQL injection - Credit ChatGPT
     query_job = client.query(QUERY, job_config=bigquery.QueryJobConfig(
         query_parameters=[
             bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
@@ -150,25 +172,65 @@ def get_user_posts(user_id):
         'image': row.ImageUrl,
     } for row in rows]
 
-def get_genai_advice(user_id):
-    """Returns the most recent advice from the genai model.
+def get_user_profile(user_id):
+    """Returns a user's profile information including a list of friend user IDs."""
 
-    This function currently returns random data. You will re-write it in Unit 3.
+    client = bigquery.Client(project=PROJECT_ID)
+
+    user_query = """
+        SELECT Name, Username, DateOfBirth, ImageUrl
+        FROM `ise-w-genai.CIS4993.Users`
+        WHERE UserId = @user_id
     """
-    advice = random.choice([
-        'Your heart rate indicates you can push yourself further. You got this!',
-        "You're doing great! Keep up the good work.",
-        'You worked hard yesterday, take it easy today.',
-        'You have burned 100 calories so far today!',
-    ])
-    image = random.choice([
-        'https://plus.unsplash.com/premium_photo-1669048780129-051d670fa2d1?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        None,
-    ])
+
+    user_job = client.query(user_query, job_config=bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
+        ]
+    ))
+
+    user_rows = list(user_job.result())  # Convert iterator to a list
+    user_row = user_rows[0] if user_rows else None  # Get first row if exists
+
+    if not user_row:
+        return None
 
     return {
+        'full_name': user_row.Name,
+        'username': user_row.Username,
+        'date_of_birth': user_row.DateOfBirth.strftime('%Y-%m-%d'),
+        'profile_image': user_row.ImageUrl,
+    }
+
+
+def get_genai_advice(user_id):
+    """Returns the most recent advice and a motivational workout image based on the user's profile."""
+
+    user_profile = get_user_profile(user_id)
+    if not user_profile:
+        return None
+    
+    user_name = user_profile['full_name']
+
+    vertexai.init(project=PROJECT_ID, location="us-central1")
+
+    model = GenerativeModel("gemini-1.5-flash-002")
+
+    query = f"Can you please give {user_name} a short motivational quote or short piece of advice to improve workouts? Only refer to them by their first name please"
+    response = model.generate_content(query)
+
+    image = random.choice([
+    'https://plus.unsplash.com/premium_photo-1669048780129-051d670fa2d1?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    None,
+    ])
+
+    # Return the data
+    return {
         'advice_id': 'advice1',
-        'timestamp': '2024-01-01 00:00:00',
-        'content': advice,
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'content': response.text,
         'image': image,
     }
+
+
+

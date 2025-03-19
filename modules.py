@@ -109,7 +109,6 @@ def display_activity_summary(workouts_list):
     st.markdown(f"* Total Steps: {total_steps} steps")
     st.markdown(f"* Total Calories Burned: {total_calories_burned} cal")
 
-
 def display_genai_advice(timestamp, content, image):
     """Displays the most recent motivational advice from the GenAI model,
     including text, timestamp, and an optional image.
@@ -146,7 +145,7 @@ def display_genai_advice(timestamp, content, image):
             <h2>GenAI Advice</h2>
             {f'<p>{content}</p>' if content else '<p>No advice today :(</p>'}
             {f'<p><em>{timestamp}</em></p>' if timestamp else ''}
-            {'<img src="' + image + '" width="200">' if image else ''}
+            {'<img src="' + image + '" width="200" />' if image else ''}
         </div>
         """,
         unsafe_allow_html=True
