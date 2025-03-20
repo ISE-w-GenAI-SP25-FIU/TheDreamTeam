@@ -9,6 +9,8 @@
 #############################################################################
 
 import random
+from google.cloud import bigquery
+
 
 users = {
     'user1': {
@@ -97,14 +99,55 @@ def get_user_workouts(user_id):
 
 
 def get_user_profile(user_id):
-    """Returns information about the given user.
-
-    This function currently returns random data. You will re-write it in Unit 3.
+    """
+    Input: user_id 
+    Output: A single dictionary with the keys full_name, username, date_of_birth, 
+    profile_image, and friends (containing a list of friend user_ids) 
     """
     if user_id not in users:
         raise ValueError(f'User {user_id} not found.')
-    return users[user_id]
 
+    # Initialize the BigQuery client
+    client = bigquery.Client()
+
+    # Define id variable for user with the user_id param
+    user_id = user_id
+
+    # SQL query for friends list(friends ids), full_name, username, date_of_birth, profile_image
+    query = f"""
+        SELECT friends.UserId1, friends.UserId2, users.Username, users.Name, users.ImageUrl, users.DateOfBirth
+        FROM `ise-w-genai.CIS4993.Friends` AS friends, `ise-w-genai.CIS4993.Users` AS users
+        WHERE NOT (friends.UserId1 = @user_id OR friends.UserId2 = @user_id) AND users.UserId = @user_id
+    """
+
+    # Define query parameters
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+        ]
+    )
+
+    # Execute the query
+    query_job = client.query(query, job_config=job_config)
+
+    # Fetch the results
+    results = query_job.result()
+
+    # user profile dict to return
+    user_profile={}
+
+    # Print the result
+    for row in results:
+        user_profile['full_name'] = row.Name
+        user_profile['username'] = row.Username
+        user_profile['date_of_birth'] = row.DateOfBirth
+        user_profile['profile_image'] = row.ImageUrl
+        user_profile['friends'] = [row.UserId1, row.UserId2]
+
+    print(user_profile)
+
+    return user_profile
+    
 
 def get_user_posts(user_id):
     """Returns a list of a user's posts.
