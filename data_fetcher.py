@@ -169,8 +169,6 @@ def get_user_profile(user_id):
         user_profile['profile_image'] = row.ImageUrl
         user_profile['friends'] = [row.UserId1, row.UserId2]
 
-    print(user_profile)
-
     return user_profile
 
 
