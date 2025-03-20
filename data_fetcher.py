@@ -94,55 +94,6 @@ def get_user_workouts(user_id):
         })
     return workouts
 
-def get_user_profile(user_id):
-    """Returns a user's profile information including a list of friend user IDs."""
-
-    client = bigquery.Client(project=PROJECT_ID)
-
-    user_query = """
-        SELECT Name, Username, DateOfBirth, ImageUrl
-        FROM `ise-w-genai.CIS4993.Users`
-        WHERE UserId = @user_id
-    """
-    # Use parameterized queries to prevent SQL injection - Credit ChatGPT
-    user_job = client.query(user_query, job_config=bigquery.QueryJobConfig(
-        query_parameters=[
-            bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
-        ]
-    ))
-
-    user_rows = list(user_job.result())  # Convert iterator to a list
-    user_row = user_rows[0] if user_rows else None  # Get first row if exists
-
-    if not user_row:
-        return None
-
-    friends_query = """
-        SELECT 
-            CASE 
-                WHEN UserId1 = @user_id THEN UserId2
-                ELSE UserId1
-            END AS FriendId
-        FROM `ise-w-genai.CIS4993.Friends`
-        WHERE UserId1 = @user_id OR UserId2 = @user_id
-    """
-    # Use parameterized queries to prevent SQL injection - Credit ChatGPT
-    friends_job = client.query(friends_query, job_config=bigquery.QueryJobConfig(
-        query_parameters=[
-            bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
-        ]
-    ))
-
-    friends_list = [row.FriendId for row in friends_job.result()]
-
-    return {
-        'full_name': user_row.Name,
-        'username': user_row.Username,
-        'date_of_birth': user_row.DateOfBirth.strftime('%Y-%m-%d'),
-        'profile_image': user_row.ImageUrl,
-        'friends': friends_list
-    }
-
 def get_user_posts(user_id):
     """Returns a list of posts for a specific user."""
     
@@ -150,7 +101,7 @@ def get_user_posts(user_id):
     
     QUERY = """
         SELECT PostId, AuthorId, Timestamp, ImageUrl, Content
-        FROM `ise-w-genai.CIS4993.Posts`
+        FROM `dreamteamproject-449421.DreamDataset.Posts`
         WHERE AuthorId = @user_id
         ORDER BY Timestamp DESC
     """
@@ -173,34 +124,54 @@ def get_user_posts(user_id):
     } for row in rows]
 
 def get_user_profile(user_id):
-    """Returns a user's profile information including a list of friend user IDs."""
+    """
+    Input: user_id 
+    Output: A single dictionary with the keys full_name, username, date_of_birth, 
+    profile_image, and friends (containing a list of friend user_ids) 
+    """
+    if user_id not in users:
+        raise ValueError(f'User {user_id} not found.')
 
+    # Initialize the BigQuery client
     client = bigquery.Client(project=PROJECT_ID)
 
-    user_query = """
-        SELECT Name, Username, DateOfBirth, ImageUrl
-        FROM `ise-w-genai.CIS4993.Users`
-        WHERE UserId = @user_id
+    # Define id variable for user with the user_id param
+    user_id = user_id
+
+    # SQL query for friends list(friends ids), full_name, username, date_of_birth, profile_image
+    query = f"""
+        SELECT friends.UserId1, friends.UserId2, users.Username, users.Name, users.ImageUrl, users.DateOfBirth
+        FROM `dreamteamproject-449421.DreamDataset.Friends` AS friends, `dreamteamproject-449421.DreamDataset.Users` AS users
+        WHERE NOT (friends.UserId1 = @user_id OR friends.UserId2 = @user_id) AND users.UserId = @user_id
     """
 
-    user_job = client.query(user_query, job_config=bigquery.QueryJobConfig(
+    # Define query parameters
+    job_config = bigquery.QueryJobConfig(
         query_parameters=[
-            bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
         ]
-    ))
+    )
 
-    user_rows = list(user_job.result())  # Convert iterator to a list
-    user_row = user_rows[0] if user_rows else None  # Get first row if exists
+    # Execute the query
+    query_job = client.query(query, job_config=job_config)
 
-    if not user_row:
-        return None
+    # Fetch the results
+    results = query_job.result()
 
-    return {
-        'full_name': user_row.Name,
-        'username': user_row.Username,
-        'date_of_birth': user_row.DateOfBirth.strftime('%Y-%m-%d'),
-        'profile_image': user_row.ImageUrl,
-    }
+    # user profile dict to return
+    user_profile={}
+
+    # Print the result
+    for row in results:
+        user_profile['full_name'] = row.Name
+        user_profile['username'] = row.Username
+        user_profile['date_of_birth'] = row.DateOfBirth
+        user_profile['profile_image'] = row.ImageUrl
+        user_profile['friends'] = [row.UserId1, row.UserId2]
+
+    print(user_profile)
+
+    return user_profile
 
 
 def get_genai_advice(user_id):

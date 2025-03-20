@@ -146,7 +146,6 @@ def display_genai_advice(timestamp, content, image):
             {f'<p>{content}</p>' if content else '<p>No advice today :(</p>'}
             {f'<p><em>{timestamp}</em></p>' if timestamp else ''}
             {'<img src="' + image + '" width="200" />' if image else ''}
-        </div>
         """,
         unsafe_allow_html=True
     )
