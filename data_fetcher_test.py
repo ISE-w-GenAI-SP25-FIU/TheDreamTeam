@@ -1,17 +1,8 @@
-#############################################################################
-# data_fetcher_test.py
-#
-# This file contains tests for data_fetcher.py.
-#
-# You will write these tests in Unit 3.
-#############################################################################
-import unittest
+from data_fetcher import get_user_sensor_data
 
-class TestDataFetcher(unittest.TestCase):
+# Example test values
+user_id = "12345"
+workout_id = "67890"
 
-    def test_foo(self):
-        """Tests foo."""
-        pass
-
-if __name__ == "__main__":
-    unittest.main()
+sensor_data = get_user_sensor_data(user_id, workout_id)
+print(sensor_data)
