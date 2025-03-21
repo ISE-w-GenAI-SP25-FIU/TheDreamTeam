@@ -10,6 +10,8 @@
 
 import random
 
+PROJECT_ID = "dreamteamproject-449421"
+
 users = {
     'user1': {
         'full_name': 'Remi',
@@ -95,53 +97,109 @@ def get_user_workouts(user_id):
         })
     return workouts
 
+def get_user_posts(user_id):
+    """Returns a list of posts for a specific user."""
+    
+    client = bigquery.Client(project=PROJECT_ID)
+    
+    QUERY = """
+        SELECT PostId, AuthorId, Timestamp, ImageUrl, Content
+        FROM `dreamteamproject-449421.DreamDataset.Posts`
+        WHERE AuthorId = @user_id
+        ORDER BY Timestamp DESC
+    """
+    
+    # Use parameterized queries to prevent SQL injection - Credit ChatGPT
+    query_job = client.query(QUERY, job_config=bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id)
+        ]
+    ))
+
+    rows = query_job.result()
+
+    return [{
+        'user_id': row.AuthorId,
+        'post_id': row.PostId,
+        'timestamp': row.Timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        'content': row.Content,
+        'image': row.ImageUrl,
+    } for row in rows]
 
 def get_user_profile(user_id):
-    """Returns information about the given user.
-
-    This function currently returns random data. You will re-write it in Unit 3.
+    """
+    Input: user_id 
+    Output: A single dictionary with the keys full_name, username, date_of_birth, 
+    profile_image, and friends (containing a list of friend user_ids) 
     """
     if user_id not in users:
         raise ValueError(f'User {user_id} not found.')
-    return users[user_id]
 
+    # Initialize the BigQuery client
+    client = bigquery.Client(project=PROJECT_ID)
 
-def get_user_posts(user_id):
-    """Returns a list of a user's posts.
+    # Define id variable for user with the user_id param
+    user_id = user_id
 
-    This function currently returns random data. You will re-write it in Unit 3.
+    # SQL query for friends list(friends ids), full_name, username, date_of_birth, profile_image
+    query = f"""
+        SELECT friends.UserId1, friends.UserId2, users.Username, users.Name, users.ImageUrl, users.DateOfBirth
+        FROM `dreamteamproject-449421.DreamDataset.Friends` AS friends, `dreamteamproject-449421.DreamDataset.Users` AS users
+        WHERE NOT (friends.UserId1 = @user_id OR friends.UserId2 = @user_id) AND users.UserId = @user_id
     """
-    content = random.choice([
-        'Had a great workout today!',
-        'The AI really motivated me to push myself further, I ran 10 miles!',
-    ])
-    return [{
-        'user_id': user_id,
-        'post_id': 'post1',
-        'timestamp': '2024-01-01 00:00:00',
-        'content': content,
-        'image': 'image_url',
-    }]
+
+    # Define query parameters
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+        ]
+    )
+
+    # Execute the query
+    query_job = client.query(query, job_config=job_config)
+
+    # Fetch the results
+    results = query_job.result()
+
+    # user profile dict to return
+    user_profile={}
+
+    # Print the result
+    for row in results:
+        user_profile['full_name'] = row.Name
+        user_profile['username'] = row.Username
+        user_profile['date_of_birth'] = row.DateOfBirth
+        user_profile['profile_image'] = row.ImageUrl
+        user_profile['friends'] = [row.UserId1, row.UserId2]
+
+    return user_profile
 
 
 def get_genai_advice(user_id):
-    """Returns the most recent advice from the genai model.
+    """Returns the most recent advice and a motivational workout image based on the user's profile."""
 
-    This function currently returns random data. You will re-write it in Unit 3.
-    """
-    advice = random.choice([
-        'Your heart rate indicates you can push yourself further. You got this!',
-        "You're doing great! Keep up the good work.",
-        'You worked hard yesterday, take it easy today.',
-        'You have burned 100 calories so far today!',
-    ])
+    user_profile = get_user_profile(user_id)
+    if not user_profile:
+        return None
+    
+    user_name = user_profile['full_name']
+
+    vertexai.init(project=PROJECT_ID, location="us-central1")
+
+    model = GenerativeModel("gemini-1.5-flash-002")
+
+    query = f"Can you please give {user_name} a short motivational quote or short piece of advice to improve workouts? Only refer to them by their first name please"
+    response = model.generate_content(query)
+
     image = random.choice([
-        'https://plus.unsplash.com/premium_photo-1669048780129-051d670fa2d1?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-        None,
+    'https://plus.unsplash.com/premium_photo-1669048780129-051d670fa2d1?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    None,
     ])
+
+    # Return the data
     return {
         'advice_id': 'advice1',
-        'timestamp': '2024-01-01 00:00:00',
-        'content': advice,
+        'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'content': response.text,
         'image': image,
     }
