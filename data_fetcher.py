@@ -9,6 +9,10 @@
 #############################################################################
 
 import random
+from google.cloud import bigquery
+import vertexai
+from vertexai.generative_models import GenerativeModel
+from datetime import datetime
 
 PROJECT_ID = "dreamteamproject-449421"
 
