@@ -12,6 +12,8 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
+PROJECT_ID = "dreamteamproject-449421"
+
 # This one has been written for you as an example. You may change it as wanted.
 def display_my_custom_component(value):
     """Displays a 'my custom component' which showcases an example of how custom
