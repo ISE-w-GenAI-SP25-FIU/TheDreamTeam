@@ -3,6 +3,7 @@ from home_page import userId
 from modules import display_genai_advice, display_post
 from data_fetcher import get_genai_advice, get_user_profile, get_user_posts, users
 import random
+
 userId = random.choice(list(users.keys()))
 
 st.title('Community')
