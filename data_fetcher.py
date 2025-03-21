@@ -38,40 +38,52 @@ users = {
         'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
         'friends': ['user1', 'user4'],
     },
-    'user4': {
-        'full_name': 'Gemmy',
-        'username': 'gems',
-        'date_of_birth': '1990-01-01',
-        'profile_image': 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Puma_shoes.jpg',
-        'friends': ['user1', 'user3'],
-    },
 }
 
 
-def get_user_sensor_data(user_id, workout_id):
-    """Returns a list of timestampped information for a given workout.
-
-    This function currently returns random data. You will re-write it in Unit 3.
+def get_user_sensor_data(user_id: str, workout_id: str):
     """
-    sensor_data = []
-    sensor_types = [
-        'accelerometer',
-        'gyroscope',
-        'pressure',
-        'temperature',
-        'heart_rate',
+    Fetches sensor data for a given workout from BigQuery.
+
+    :param user_id: The ID of the user.
+    :param workout_id: The ID of the workout.
+    :return: A list of sensor data dictionaries with keys:
+             sensor_type, timestamp, data, units.
+    """
+    client = bigquery.Client()
+
+    query = f"""
+        SELECT sensor_type, timestamp, data, units
+        FROM `bigquery-sql-project-453401.CIS4993.sensor_data`
+        WHERE user_id = @user_id AND workout_id = @workout_id
+        ORDER BY timestamp ASC
+    """
+
+    query_params = [
+        bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+        bigquery.ScalarQueryParameter("workout_id", "STRING", workout_id),
     ]
-    for index in range(random.randint(5, 100)):
-        random_minute = str(random.randint(0, 59))
-        if len(random_minute) == 1:
-            random_minute = '0' + random_minute
-        timestamp = '2024-01-01 00:' + random_minute + ':00'
-        data = random.random() * 100
-        sensor_type = random.choice(sensor_types)
-        sensor_data.append(
-            {'sensor_type': sensor_type, 'timestamp': timestamp, 'data': data}
-        )
-    return sensor_data
+
+    job_config = bigquery.QueryJobConfig(query_parameters=query_params)
+
+    try:
+        query_job = client.query(query, job_config=job_config)
+        results = query_job.result()
+
+        sensor_data = []
+        for row in results:
+            sensor_data.append({
+                "sensor_type": row.sensor_type,
+                "timestamp": row.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                "data": row.data,
+                "units": row.units
+            })
+
+        return sensor_data
+
+    except Exception as e:
+        print(f"Error fetching data from BigQuery: {e}")
+        return []
 
 
 def get_user_workouts(user_id):
