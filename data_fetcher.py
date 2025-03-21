@@ -91,31 +91,87 @@ def get_user_sensor_data(user_id: str, workout_id: str):
 
 
 def get_user_workouts(user_id):
-    """Returns a list of user's workouts.
-
-    This function currently returns random data. You will re-write it in Unit 3.
+    """Returns a list of user's workouts. Fetches workout data for a given user from BigQuery.
+    
+     Args:
+        user_id: The ID of the user.
+        
+    Returns:
+        A list of workout dictionaries with keys:
+        - workout_id: Unique identifier for the workout
+        - start_timestamp: When the workout started (format: 'YYYY-MM-DD HH:MM:SS')
+        - end_timestamp: When the workout ended (format: 'YYYY-MM-DD HH:MM:SS')
+        - start_lat_lng: List of [latitude, longitude] for the start location
+        - end_lat_lng: List of [latitude, longitude] for the end location
+        - distance: Distance covered in kilometers (float)
+        - steps: Number of steps taken (integer)
+        - calories_burned: Number of calories burned (integer)
     """
-    workouts = []
-    for index in range(random.randint(1, 3)):
-        random_lat_lng_1 = (
-            1 + random.randint(0, 100) / 100,
-            4 + random.randint(0, 100) / 100,
-        )
-        random_lat_lng_2 = (
-            1 + random.randint(0, 100) / 100,
-            4 + random.randint(0, 100) / 100,
-        )
-        workouts.append({
-            'workout_id': f'workout{index}',
-            'start_timestamp': '2024-01-01 00:00:00',
-            'end_timestamp': '2024-01-01 00:30:00',
-            'start_lat_lng': random_lat_lng_1,
-            'end_lat_lng': random_lat_lng_2,
-            'distance': random.randint(0, 200) / 10.0,
-            'steps': random.randint(0, 20000),
-            'calories_burned': random.randint(0, 100),
-        })
-    return workouts
+    from google.cloud import bigquery
+    
+    client = bigquery.Client()
+    
+    query = """
+        SELECT 
+            workout_id,
+            start_timestamp,
+            end_timestamp,
+            start_latitude,
+            start_longitude,
+            end_latitude,
+            end_longitude,
+            distance,
+            steps,
+            calories_burned
+        FROM `bigquery-sql-project-453401.CIS4993.workouts`
+        WHERE user_id = @user_id
+        ORDER BY start_timestamp DESC
+    """
+    
+    query_params = [
+        bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+    ]
+    
+    job_config = bigquery.QueryJobConfig(query_parameters=query_params)
+    
+    try:
+        query_job = client.query(query, job_config=job_config)
+        results = query_job.result()
+        
+        workouts = []
+        for row in results:
+            try:
+                # Safely convert values with error handling
+                start_lat = float(row.start_latitude) if row.start_latitude is not None else 0.0
+                start_lng = float(row.start_longitude) if row.start_longitude is not None else 0.0
+                end_lat = float(row.end_latitude) if row.end_latitude is not None else 0.0
+                end_lng = float(row.end_longitude) if row.end_longitude is not None else 0.0
+                distance = float(row.distance) if row.distance is not None else 0.0
+                steps = int(row.steps) if row.steps is not None else 0
+                calories = int(row.calories_burned) if row.calories_burned is not None else 0
+                
+                # Create workout dictionary
+                workout = {
+                    'workout_id': row.workout_id,
+                    'start_timestamp': row.start_timestamp.strftime('%Y-%m-%d %H:%M:%S') if hasattr(row.start_timestamp, 'strftime') else str(row.start_timestamp),
+                    'end_timestamp': row.end_timestamp.strftime('%Y-%m-%d %H:%M:%S') if hasattr(row.end_timestamp, 'strftime') else str(row.end_timestamp),
+                    'start_lat_lng': [start_lat, start_lng],
+                    'end_lat_lng': [end_lat, end_lng],
+                    'distance': distance,
+                    'steps': steps,
+                    'calories_burned': calories
+                }
+                workouts.append(workout)
+            except Exception as e:
+                print(f"Error processing workout row: {e}")
+                continue
+        
+        return workouts
+        
+    except Exception as e:
+        print(f"Error fetching workouts from BigQuery: {e}")
+        # Return empty list on error
+        return []
 
 
 def get_user_profile(user_id):
@@ -144,6 +200,79 @@ def get_user_posts(user_id):
         'content': content,
         'image': 'image_url',
     }]
+
+def create_user_post(user_id, content, image=None):
+    """
+    Creates a new post for the specified user.
+    
+    Args:
+        user_id: ID of the user creating the post
+        content: Text content of the post
+        image: Optional image URL for the post (defaults to None)
+        
+    Returns:
+        The created post dictionary
+    """
+    import datetime
+    import os
+    from google.cloud import bigquery
+    
+    # Set the environment variable for Google credentials
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service-account.json"
+    
+    # Generate timestamp and post_id
+    timestamp = datetime.datetime.now()
+    post_id = f'post_{timestamp.strftime("%Y%m%d%H%M%S")}'
+    
+    # Create post object
+    new_post = {
+        'user_id': user_id,
+        'post_id': post_id,
+        'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        'content': content,
+        'image': image
+    }
+    
+    try:
+        # Create BigQuery client
+        client = bigquery.Client()
+        
+        # Define the table reference
+        table_id = 'bigquery-sql-project-453401.CIS4993.posts'
+        
+        # Create a query to insert the post
+        query = f"""
+            INSERT INTO `{table_id}` (post_id, user_id, timestamp, content, image)
+            VALUES (@post_id, @user_id, @timestamp, @content, @image)
+        """
+        
+        query_params = [
+            bigquery.ScalarQueryParameter("post_id", "STRING", post_id),
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+            bigquery.ScalarQueryParameter("timestamp", "TIMESTAMP", timestamp),
+            bigquery.ScalarQueryParameter("content", "STRING", content),
+            bigquery.ScalarQueryParameter("image", "STRING", image if image else None),
+        ]
+        
+        job_config = bigquery.QueryJobConfig(query_parameters=query_params)
+        
+        query_job = client.query(query, job_config=job_config)
+        query_job.result()  # Wait for the query to complete
+        
+    except Exception as e:
+        print(f"Error creating post in BigQuery: {e}")
+        # If there's an error with BigQuery, we'll at least store the post in memory
+        # for the current session
+        global posts
+        if 'posts' not in globals():
+            posts = {}
+        
+        if user_id not in posts:
+            posts[user_id] = []
+        
+        posts[user_id].append(new_post)
+    
+    return new_post
 
 
 def get_genai_advice(user_id):
