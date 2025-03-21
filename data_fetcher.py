@@ -11,7 +11,8 @@ import os
 import random
 
 # Set Google Cloud credentials (make sure this file exists locally)
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service-account.json"
+if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service-account.json"
 
 # Simulated user profiles
 users = {
