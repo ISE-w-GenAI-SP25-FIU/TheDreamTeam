@@ -10,10 +10,10 @@ from google.cloud import bigquery
 import os
 import random
 
-# Ensure authentication is set (Make sure the JSON file exists)
+# Set Google Cloud credentials (make sure this file exists locally)
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service-account.json"
 
-# Dictionary to simulate user profiles
+# Simulated user profiles
 users = {
     'user1': {
         'full_name': 'Remi',
@@ -45,30 +45,36 @@ users = {
     },
 }
 
+
 def get_user_sensor_data(user_id: str, workout_id: str):
     """
     Fetches sensor data for a given workout from BigQuery.
 
     :param user_id: The ID of the user.
     :param workout_id: The ID of the workout.
-    :return: A list of sensor data dictionaries with keys:
-             sensor_type, timestamp, data, units.
+    :return: A list of sensor data dictionaries.
     """
     client = bigquery.Client()
 
-    query = f"""
-        SELECT sensor_type, timestamp, data, units
-        FROM `bigquery-sql-project-453401.CIS4993.sensor_data`
-        WHERE user_id = @user_id AND workout_id = @workout_id
-        ORDER BY timestamp ASC
+    query = """
+        SELECT
+            st.sensor_type_name AS sensor_type,
+            sd.timestamp,
+            sd.data,
+            sd.units
+        FROM `dreamteamproject-449421.DreamDataset.SensorData` sd
+        JOIN `dreamteamproject-449421.DreamDataset.SensorTypes` st
+        ON sd.sensor_type_id = st.sensor_type_id
+        WHERE sd.user_id = @user_id AND sd.workout_id = @workout_id
+        ORDER BY sd.timestamp
     """
 
-    query_params = [
-        bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
-        bigquery.ScalarQueryParameter("workout_id", "STRING", workout_id),
-    ]
-
-    job_config = bigquery.QueryJobConfig(query_parameters=query_params)
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+            bigquery.ScalarQueryParameter("workout_id", "STRING", workout_id),
+        ]
+    )
 
     try:
         query_job = client.query(query, job_config=job_config)
@@ -80,21 +86,19 @@ def get_user_sensor_data(user_id: str, workout_id: str):
                 "sensor_type": row.sensor_type,
                 "timestamp": row.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
                 "data": row.data,
-                "units": row.units
+                "units": row.units,
             })
 
         return sensor_data
 
     except Exception as e:
-        print(f"Error fetching data from BigQuery: {e}")
+        print(f"Error fetching sensor data: {e}")
         return []
 
 
-def get_user_workouts(user_id):
-    """Returns a list of user's workouts.
+# The rest remain as-is for now (to be updated in your other steps)
 
-    This function currently returns random data. You will re-write it in Unit 3.
-    """
+def get_user_workouts(user_id):
     workouts = []
     for index in range(random.randint(1, 3)):
         random_lat_lng_1 = (
@@ -119,20 +123,12 @@ def get_user_workouts(user_id):
 
 
 def get_user_profile(user_id):
-    """Returns information about the given user.
-
-    This function currently returns random data. You will re-write it in Unit 3.
-    """
     if user_id not in users:
         raise ValueError(f'User {user_id} not found.')
     return users[user_id]
 
 
 def get_user_posts(user_id):
-    """Returns a list of a user's posts.
-
-    This function currently returns random data. You will re-write it in Unit 3.
-    """
     content = random.choice([
         'Had a great workout today!',
         'The AI really motivated me to push myself further, I ran 10 miles!',
@@ -147,10 +143,6 @@ def get_user_posts(user_id):
 
 
 def get_genai_advice(user_id):
-    """Returns the most recent advice from the genai model.
-
-    This function currently returns random data. You will re-write it in Unit 3.
-    """
     advice = random.choice([
         'Your heart rate indicates you can push yourself further. You got this!',
         "You're doing great! Keep up the good work.",
@@ -158,7 +150,7 @@ def get_genai_advice(user_id):
         'You have burned 100 calories so far today!',
     ])
     image = random.choice([
-        'https://plus.unsplash.com/premium_photo-1669048780129-051d670fa2d1?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        'https://plus.unsplash.com/premium_photo-1669048780129-051d670fa2d1?q=80&w=3870&auto=format&fit=crop',
         None,
     ])
     return {
