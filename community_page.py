@@ -1,7 +1,9 @@
 import streamlit as st
 from home_page import userId
 from modules import display_genai_advice, display_post
-from data_fetcher import get_genai_advice, get_user_profile, get_user_posts
+from data_fetcher import get_genai_advice, get_user_profile, get_user_posts, users
+userId = random.choice(list(users.keys()))
+
 st.title('Community')
 col1, col2 = st.columns(2, gap="small")
 

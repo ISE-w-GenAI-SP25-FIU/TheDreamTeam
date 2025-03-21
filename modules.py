@@ -191,27 +191,28 @@ def display_recent_workouts(workouts):
             
             with col2:
                 st.metric("Calories Burned", f"{workout['calories_burned']} cal")
-                
+
                 # Create a chart showing start and end locations
                 chart_data = pd.DataFrame([
-                    {'point': 'Start', 'latitude': workout['start_lat_lng'][0], 'longitude': workout['start_lat_lng'][1]},
-                    {'point': 'End', 'latitude': workout['end_lat_lng'][0], 'longitude': workout['end_lat_lng'][1]}
+                    {'point': 'Start', 'latitude': float(workout['start_lat_lng'][0]), 'longitude': float(workout['start_lat_lng'][1])},
+                    {'point': 'End', 'latitude': float(workout['end_lat_lng'][0]), 'longitude': float(workout['end_lat_lng'][1])}
                 ])
-                
-                # Create a chart
+
+                # Create a chart with scales that don't start at zero to show negative values
                 st.write("Workout Path")
                 chart = alt.Chart(chart_data).mark_circle(size=100).encode(
-                    x=alt.X('longitude', title='Longitude'),
-                    y=alt.Y('latitude', title='Latitude'),
+                    x=alt.X('longitude', title='Longitude', scale=alt.Scale(zero=False)),
+                    y=alt.Y('latitude', title='Latitude', scale=alt.Scale(zero=False)),
                     color=alt.Color('point', scale=alt.Scale(domain=['Start', 'End'], range=['green', 'red'])),
                     tooltip=['point', 'latitude', 'longitude']
                 ).properties(height=150)
-                
+
                 # Add a line connecting start and end points
                 line_chart = alt.Chart(chart_data).mark_line().encode(
                     x='longitude',
                     y='latitude',
                     color=alt.value('gray')
                 )
+                                
                 
                 st.altair_chart(chart + line_chart, use_container_width=True)
