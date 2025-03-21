@@ -12,6 +12,7 @@ import datetime
 import pandas as pd
 import json
 from home_page import userId
+import random
 
 user_id = random.choice(list(users.keys()))
 workout_data = get_user_workouts(user_id)
