@@ -40,31 +40,35 @@ users = {
     },
 }
 
-
 def get_user_sensor_data(user_id: str, workout_id: str):
     """
     Fetches sensor data for a given workout from BigQuery.
 
     :param user_id: The ID of the user.
     :param workout_id: The ID of the workout.
-    :return: A list of sensor data dictionaries with keys:
-             sensor_type, timestamp, data, units.
+    :return: A list of sensor data dictionaries.
     """
-    client = bigquery.Client()
+    client = bigquery.Client(project=PROJECT_ID)
 
-    query = f"""
-        SELECT sensor_type, timestamp, data, units
-        FROM `bigquery-sql-project-453401.CIS4993.sensor_data`
-        WHERE user_id = @user_id AND workout_id = @workout_id
-        ORDER BY timestamp ASC
+    query = """
+        SELECT
+            st.sensor_type_name AS sensor_type,
+            sd.timestamp,
+            sd.data,
+            sd.units
+        FROM `dreamteamproject-449421.DreamDataset.SensorData` sd
+        JOIN `dreamteamproject-449421.DreamDataset.SensorTypes` st
+        ON sd.sensor_type_id = st.sensor_type_id
+        WHERE sd.user_id = @user_id AND sd.workout_id = @workout_id
+        ORDER BY sd.timestamp
     """
 
-    query_params = [
-        bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
-        bigquery.ScalarQueryParameter("workout_id", "STRING", workout_id),
-    ]
-
-    job_config = bigquery.QueryJobConfig(query_parameters=query_params)
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+            bigquery.ScalarQueryParameter("workout_id", "STRING", workout_id),
+        ]
+    )
 
     try:
         query_job = client.query(query, job_config=job_config)
@@ -76,13 +80,13 @@ def get_user_sensor_data(user_id: str, workout_id: str):
                 "sensor_type": row.sensor_type,
                 "timestamp": row.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
                 "data": row.data,
-                "units": row.units
+                "units": row.units,
             })
 
         return sensor_data
 
     except Exception as e:
-        print(f"Error fetching data from BigQuery: {e}")
+        print(f"Error fetching sensor data: {e}")
         return []
 
 def get_user_workouts(user_id):
