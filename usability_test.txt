@@ -1,0 +1,37 @@
+Participant Introduction:
+Hello, we are The Dream Team and we thank you for participating in our usability testing survey. As a participant of this survey you will imitate the interactions of a registered website user. You are a member of the ISE workout community who is interested in sharing their exercise progress with their peers on our website.
+
+Test #1:
+
+Tasks: 
+You want to view the exercise leaderboard of today's top point earners. You also want to learn about any badges/achievements you’ve gained.
+
+Notes:
+
+Feedback:
+- How easy/hard was it to complete the task given?
+
+- What confusions were there? Why were they confused?
+
+- What could be improved?
+
+Results:
+
+Test #2:
+
+Tasks: 
+You want to find a list of chest workouts that you can implement in your exercise routine. See if you can find multiple ways to complete this task.
+
+Notes: 
+User was easily able to navigate to the workouts page. Once on the page, they attempted to find a workout using the search bar. User noted that it would be nice to have workouts showing as soon as the page loads. User was hesitant to use the Filter button and opted for the search bar for the majority of the task.
+
+Feedback:
+- How easy/hard was it to complete the task given?
+The task was very straightforward and easy to complete for the user.
+- What confusions were there? Why were they confused?
+The user initially didn’t know how they should search for a workout and what keywords would be accepted. Customer was also confused by the “Filter” button.
+- What could be improved?
+User noted that they would prefer workouts to already be showing when the page loads. User also suggested changing the name of the “Filter” dropdown to “Sort” to avoid confusion. User also suggested being able to favorite workouts to easily grab later.
+
+Results:
+Following the feedback from the usability testing, a few small but distinct changes were made to the design of the workouts page based on the user’s comments. First, the customer noted that the search bar “was confusing to know what to type”. To clear up any uncertainty, a list of workouts will be populated upon loading the workouts page so the user understands the format of the list and the keywords they should use. Additionally, the user noted that they were “confused by what Filter meant” in the dropdown. To relieve some of the confusion, we opted to change the text to “Sort By”. Lastly, the user suggested that “it would be nice to favorite certain workouts so I don’t have to search every time”. Based on this feature request, a favorite button (star icon) was added to the top right of the workouts page. When clicked, a list of the user's favorite workouts will be shown. To favorite a workout, the user must click the favorite button (star symbol) in the list of workouts.
