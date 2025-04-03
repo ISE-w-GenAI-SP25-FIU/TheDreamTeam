@@ -16,10 +16,15 @@ Feedback:
 
 User 1:
 - How easy/hard was it to complete the task given?
+User responded that the task was easy to complete. The navigation was clear with big buttons that clearly stated how to view the leaderboard and points.
 
 - What confusions were there? Why were they confused?
+User was a bit confused on how the points were calculated for each workout.
 
 - What could be improved?
+Explicitly stating the points earned for each workout as well as the bonus points for miles ran.
+A section listing each badge and its details.
+
 
 User 2:
 - How easy/hard was it to complete the task given?
@@ -28,7 +33,11 @@ User 2:
 
 - What could be improved?
 
+
 Results:
+Following the users’ feedback, a few improvements were made to the leaderboard. A score calculation button was added which when hovered over, states how points are calculated.
+Lastly a hyperlink was added that allowed users to navigate to the ‘Workouts’ page by clicking on workouts in the ‘Points Summary’ section of the leaderboard.
+
 
 Test #2:
 
