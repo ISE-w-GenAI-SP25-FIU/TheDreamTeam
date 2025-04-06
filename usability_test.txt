@@ -1,0 +1,67 @@
+Participant Introduction:
+Hello, we are The Dream Team and we thank you for participating in our usability testing survey. As a participant of this survey you will imitate the interactions of a registered website user. You are a member of the ISE workout community who is interested in sharing their exercise progress with their peers on our website.
+
+Test #1:
+Tasks:
+You want to view the exercise leaderboard of today's top point earners. You also want to learn about any badges/achievements you’ve gained.
+Notes:
+User 1:
+For the unit testing of the leaderboard of the day, the user was instructed to start from the home page in order to go to the community page. The user skimmed through the page and checked there are two main sections: The leaderboard section and the badges section. The user did not know that the badges are clickable while working on the task freely.
+ 
+User 2:
+The user also was instructed to start from the home page in order to go to the community page.
+On the community page, the user was allowed to navigate with no interrupt. The user noticed the two main sections and checked the badges’ pop-up feature quickly. The user suggested a better layout of the components on the page such as the badges and the leaderboard.
+ 
+Feedback:
+User 1:
+- How easy/hard was it to complete the task given?
+There was no issue with navigating the pages and the task was not difficult to follow.
+- What confusions were there? Why were they confused?
+The user did not figure that the badges are actually clickable because there was no sign/title for it.
+- What could be improved?
+The user suggested adding a title besides the “Badges” header title so others may notice the click feature and try the feature.
+
+ User 2:
+- How easy/hard was it to complete the task given?
+There was no confusion over the task and the instruction.
+- What confusions were there? Why were they confused?
+The features of the components on the community page work well. However, visually the layout was not organized.
+- What could be improved?
+The user suggested moving the GenAI section to the right side and moving the badges up to the place next to the leaderboard
+Results:
+Based on the feedback from the users after conducting the usability testing, we applied some changes to the layout of the community page. Specifically, we decided to make the size of the badges bigger and then move the badges up to the spot right next to the leaderboard so that users can see what kind of badges the leader got more easily. On top of it, we put the little click icon next to the “Badges” heading. On second thought, presumably the reason why one of the users suggested adding click text/icon is because the badges were located at the bottom of the page, so the user might have not hovered over the badges. If the badges are located right next to the leaderboard up in the page, the user will more likely hover over the badges while clicking the leaderboard and the sidebar on the right. In that sense, we might be able to remove the click icon if needed later on.
+
+
+Test #2:
+
+Tasks: 
+You want to find a list of chest workouts that you can implement in your exercise routine. See if you can find multiple ways to complete this task.
+
+Notes: 
+
+User 1:
+User was easily able to navigate to the workouts page. Once on the page, they attempted to find a workout using the search bar. User noted that it would be nice to have workouts showing as soon as the page loads. User was hesitant to use the Filter button and opted for the search bar for the majority of the task.
+User 2:
+User had no issues finding the workouts page and quickly went to the search bar to type in a specific workout. User commented on how they liked the inclusion of both a search bar and a filter. User suggested that color scheme could be changed and a favorite button could be added.
+
+Feedback:
+User 1:
+- How easy/hard was it to complete the task given?
+The task was very straightforward and easy to complete.
+- What confusions were there? Why were they confused?
+The user initially didn’t know how they should search for a workout and what keywords would be accepted. One user was also confused by the “Filter” button.
+- What could be improved?
+User noted that they would prefer workouts to already be showing when the page loads. User also suggested changing the name of the “Filter” dropdown to “Sort” to avoid confusion.
+
+User 2:
+- How easy/hard was it to complete the task given?
+The task was easy and the user liked having multiple ways to find workouts.
+- What confusions were there? Why were they confused?
+The user stated they were not confused during any moment of the test.
+- What could be improved?
+User suggested being able to favorite workouts to easily grab later.
+
+Results:
+
+Following the feedback from the usability testing, a few small but distinct changes were made to the design of the workouts page based on the user’s comments. First, one user noted that the search bar “was confusing to know what to type”. To clear up any uncertainty, a list of workouts will be populated upon loading the workouts page so the user understands the format of the list and the keywords they should use. Additionally, another user noted that they were “confused by what Filter meant” in the dropdown. To relieve some of the confusion, we opted to change the text to “Sort By”. Lastly, a user suggested that “it would be nice to favorite certain workouts so I don’t have to search every time”. Based on this feature request, a favorite button (star icon) was added to the top right of the workouts page. When clicked, a list of the user's favorite workouts will be shown. To favorite a workout, the user must click the favorite button (star symbol) in the list of workouts.
+
