@@ -2,41 +2,34 @@ Participant Introduction:
 Hello, we are The Dream Team and we thank you for participating in our usability testing survey. As a participant of this survey you will imitate the interactions of a registered website user. You are a member of the ISE workout community who is interested in sharing their exercise progress with their peers on our website.
 
 Test #1:
-
-Tasks: 
+Tasks:
 You want to view the exercise leaderboard of today's top point earners. You also want to learn about any badges/achievements you’ve gained.
-
 Notes:
-
 User 1:
-
+For the unit testing of the leaderboard of the day, the user was instructed to start from the home page in order to go to the community page. The user skimmed through the page and checked there are two main sections: The leaderboard section and the badges section. The user did not know that the badges are clickable while working on the task freely.
+ 
 User 2:
-
+The user also was instructed to start from the home page in order to go to the community page.
+On the community page, the user was allowed to navigate with no interrupt. The user noticed the two main sections and checked the badges’ pop-up feature quickly. The user suggested a better layout of the components on the page such as the badges and the leaderboard.
+ 
 Feedback:
-
 User 1:
 - How easy/hard was it to complete the task given?
-User responded that the task was easy to complete. The navigation was clear with big buttons that clearly stated how to view the leaderboard and points.
-
+There was no issue with navigating the pages and the task was not difficult to follow.
 - What confusions were there? Why were they confused?
-User was a bit confused on how the points were calculated for each workout.
-
+The user did not figure that the badges are actually clickable because there was no sign/title for it.
 - What could be improved?
-Explicitly stating the points earned for each workout as well as the bonus points for miles ran.
-A section listing each badge and its details.
+The user suggested adding a title besides the “Badges” header title so others may notice the click feature and try the feature.
 
-
-User 2:
+ User 2:
 - How easy/hard was it to complete the task given?
-
+There was no confusion over the task and the instruction.
 - What confusions were there? Why were they confused?
-
+The features of the components on the community page work well. However, visually the layout was not organized.
 - What could be improved?
-
-
+The user suggested moving the GenAI section to the right side and moving the badges up to the place next to the leaderboard
 Results:
-Following the users’ feedback, a few improvements were made to the leaderboard. A score calculation button was added which when hovered over, states how points are calculated.
-Lastly a hyperlink was added that allowed users to navigate to the ‘Workouts’ page by clicking on workouts in the ‘Points Summary’ section of the leaderboard.
+Based on the feedback from the users after conducting the usability testing, we applied some changes to the layout of the community page. Specifically, we decided to make the size of the badges bigger and then move the badges up to the spot right next to the leaderboard so that users can see what kind of badges the leader got more easily. On top of it, we put the little click icon next to the “Badges” heading. On second thought, presumably the reason why one of the users suggested adding click text/icon is because the badges were located at the bottom of the page, so the user might have not hovered over the badges. If the badges are located right next to the leaderboard up in the page, the user will more likely hover over the badges while clicking the leaderboard and the sidebar on the right. In that sense, we might be able to remove the click icon if needed later on.
 
 
 Test #2:
