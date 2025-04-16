@@ -1,0 +1,150 @@
+import streamlit as st
+import requests
+import os
+#from dotenv import load_dotenv
+
+#load_dotenv()
+
+API_KEY = os.getenv("API_KEY")
+API_URL = "https://api.api-ninjas.com/v1/exercises"
+
+st.title("🏋️ Exercise Explorer")
+
+# Helper: convert pretty label to API value and vice versa
+def format_label(s): return s.replace("_", " ").title()
+def unformat_label(s): return s.lower().replace(" ", "_")
+
+# Options with clean display labels
+type_options_raw = [
+    "cardio", "olympic_weightlifting", "plyometrics",
+    "powerlifting", "strength", "stretching", "strongman"
+]
+muscle_options_raw = [
+    "abdominals", "abductors", "adductors", "biceps", "calves", "chest", 
+    "forearms", "glutes", "hamstrings", "lats", "lower_back", "middle_back", 
+    "neck", "quadriceps", "traps", "triceps"
+]
+difficulty_options_raw = ["beginner", "intermediate", "expert"]
+
+# Display-friendly labels
+type_options = [format_label(t) for t in type_options_raw]
+muscle_options = [format_label(m) for m in muscle_options_raw]
+difficulty_options = [format_label(d) for d in difficulty_options_raw]
+
+# --- UI Components ---
+with st.sidebar:
+    st.header("🔎 Filter Exercises")
+    search_query = st.text_input("Exercise Name", placeholder="e.g. press")
+
+    selected_type_label = st.selectbox("Type", ["All"] + type_options)
+    selected_muscle_label = st.selectbox("Muscle", ["All"] + muscle_options)
+    selected_difficulty_labels = st.multiselect(
+        "Difficulty", difficulty_options, default=[]
+    )
+
+# Convert labels back to raw values for API query
+selected_type = unformat_label(selected_type_label) if selected_type_label != "All" else None
+selected_muscle = unformat_label(selected_muscle_label) if selected_muscle_label != "All" else None
+selected_difficulties = [unformat_label(d) for d in selected_difficulty_labels]
+
+# --- Fetch from API ---
+@st.cache_data(show_spinner=True)
+def fetch_exercises(name=None, type_=None, muscle=None, difficulty=None):
+    params = {}
+    if name:
+        params["name"] = name
+    if type_:
+        params["type"] = type_
+    if muscle:
+        params["muscle"] = muscle
+    if difficulty:
+        results = []
+        for d in difficulty:
+            params["difficulty"] = d
+            response = requests.get(API_URL, headers={"X-Api-Key": API_KEY}, params=params)
+            if response.status_code == 200:
+                results.extend(response.json())
+        return results
+    else:
+        response = requests.get(API_URL, headers={"X-Api-Key": API_KEY}, params=params)
+        if response.status_code == 200:
+            return response.json()
+    return []
+
+# --- Favorite Functions ---
+if "favorites" not in st.session_state:
+    st.session_state.favorites = []
+
+def toggle_favorite(exercise):
+    if exercise in st.session_state.favorites:
+        st.session_state.favorites.remove(exercise)
+    else:
+        st.session_state.favorites.append(exercise)
+    st.rerun()
+
+def is_favorite(exercise_name):
+    return any(ex["name"] == exercise_name for ex in st.session_state.favorites)
+
+# --- Filter Exercises ---
+def filter_exercises(exercises, name_query, type_filter, muscle_filter, difficulty_filters):
+    filtered = exercises
+    if name_query:
+        filtered = [ex for ex in filtered if name_query.lower() in ex["name"].lower()]
+    if type_filter:
+        filtered = [ex for ex in filtered if type_filter.lower() == ex["type"].lower()]
+    if muscle_filter:
+        filtered = [ex for ex in filtered if muscle_filter.lower() == ex["muscle"].lower()]
+    if difficulty_filters:
+        filtered = [ex for ex in filtered if ex["difficulty"].lower() in difficulty_filters]
+    return filtered
+
+# --- Render Exercise Cards ---
+def render_exercise_card(ex, index):
+    cols = st.columns([0.9, 0.1])
+    with cols[0]:
+        st.subheader(ex["name"])
+        st.markdown(f"**Type:** {format_label(ex['type'])} | **Muscle:** {format_label(ex['muscle'])}")
+        st.markdown(f"**Equipment:** {format_label(ex['equipment'])} | **Difficulty:** {format_label(ex['difficulty'])}")
+        with st.expander("📋 Instructions"):
+            st.write(ex["instructions"])
+    with cols[1]:
+        is_fav = is_favorite(ex["name"])
+        # Use a unique key for the button by including the index
+        if st.button("⭐" if is_fav else "☆", key=f"{ex['name']}_{index}"):
+            toggle_favorite(ex)
+    st.markdown("---")
+
+selected_tab = st.sidebar.radio("Choose a Tab", ["Search", "Favorites"])
+
+if selected_tab == "Search":
+    results = fetch_exercises(
+        name=search_query,
+        type_=selected_type,
+        muscle=selected_muscle,
+        difficulty=selected_difficulties
+    )
+
+    st.markdown(f"### Found {len(results)} exercise(s)")
+    for index, ex in enumerate(results):
+        render_exercise_card(ex, index)
+
+elif selected_tab == "Favorites":
+    # Filter the favorites based on search query and selected filters
+    filtered_favorites = filter_exercises(
+        st.session_state.favorites,
+        search_query,
+        selected_type,
+        selected_muscle,
+        selected_difficulties
+    )
+
+    # Display the number of filtered favorites
+    st.markdown(f"### Found {len(filtered_favorites)} favorite(s)")
+
+    if filtered_favorites:
+        for index, ex in enumerate(filtered_favorites):
+            render_exercise_card(ex, index)
+    else:
+        # Only show the message if there are favorites but none match the filter
+        if len(st.session_state.favorites) > 0:
+            st.info("No favorites match the filters yet. Try adjusting your filters!")
