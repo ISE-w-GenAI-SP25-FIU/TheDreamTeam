@@ -1,20 +1,22 @@
 import streamlit as st
 import requests
 import os
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
+from data_fetcher import get_user_favorites, add_favorite, remove_favorite
 
-#load_dotenv()
+load_dotenv()
+
+user_id = "user1"
 
 API_KEY = os.getenv("API_KEY")
 API_URL = "https://api.api-ninjas.com/v1/exercises"
 
 st.title("🏋️ Exercise Explorer")
 
-# Helper: convert pretty label to API value and vice versa
+# Convert filter labels to API value and vice versa
 def format_label(s): return s.replace("_", " ").title()
 def unformat_label(s): return s.lower().replace(" ", "_")
 
-# Options with clean display labels
 type_options_raw = [
     "cardio", "olympic_weightlifting", "plyometrics",
     "powerlifting", "strength", "stretching", "strongman"
@@ -31,7 +33,6 @@ type_options = [format_label(t) for t in type_options_raw]
 muscle_options = [format_label(m) for m in muscle_options_raw]
 difficulty_options = [format_label(d) for d in difficulty_options_raw]
 
-# --- UI Components ---
 with st.sidebar:
     st.header("🔎 Filter Exercises")
     search_query = st.text_input("Exercise Name", placeholder="e.g. press")
@@ -47,7 +48,6 @@ selected_type = unformat_label(selected_type_label) if selected_type_label != "A
 selected_muscle = unformat_label(selected_muscle_label) if selected_muscle_label != "All" else None
 selected_difficulties = [unformat_label(d) for d in selected_difficulty_labels]
 
-# --- Fetch from API ---
 @st.cache_data(show_spinner=True)
 def fetch_exercises(name=None, type_=None, muscle=None, difficulty=None):
     params = {}
@@ -71,21 +71,21 @@ def fetch_exercises(name=None, type_=None, muscle=None, difficulty=None):
             return response.json()
     return []
 
-# --- Favorite Functions ---
-if "favorites" not in st.session_state:
-    st.session_state.favorites = []
-
 def toggle_favorite(exercise):
-    if exercise in st.session_state.favorites:
-        st.session_state.favorites.remove(exercise)
+    """Toggle favorite status for a given exercise."""
+    favorites = get_user_favorites(user_id)
+    # Check if the exercise is already a favorite by name
+    if any(fav["name"] == exercise["name"] for fav in favorites):
+        remove_favorite(user_id, exercise["name"])
     else:
-        st.session_state.favorites.append(exercise)
-    st.rerun()
+        add_favorite(user_id, exercise)
+    st.rerun()  # Refresh the page
 
 def is_favorite(exercise_name):
-    return any(ex["name"] == exercise_name for ex in st.session_state.favorites)
+    """Check if a given exercise is a favorite."""
+    favorites = get_user_favorites(user_id)
+    return any(fav["name"] == exercise_name for fav in favorites)
 
-# --- Filter Exercises ---
 def filter_exercises(exercises, name_query, type_filter, muscle_filter, difficulty_filters):
     filtered = exercises
     if name_query:
@@ -98,7 +98,6 @@ def filter_exercises(exercises, name_query, type_filter, muscle_filter, difficul
         filtered = [ex for ex in filtered if ex["difficulty"].lower() in difficulty_filters]
     return filtered
 
-# --- Render Exercise Cards ---
 def render_exercise_card(ex, index):
     cols = st.columns([0.9, 0.1])
     with cols[0]:
@@ -129,22 +128,20 @@ if selected_tab == "Search":
         render_exercise_card(ex, index)
 
 elif selected_tab == "Favorites":
-    # Filter the favorites based on search query and selected filters
+    favorites = get_user_favorites(user_id)
     filtered_favorites = filter_exercises(
-        st.session_state.favorites,
+        favorites,
         search_query,
         selected_type,
         selected_muscle,
         selected_difficulties
     )
 
-    # Display the number of filtered favorites
     st.markdown(f"### Found {len(filtered_favorites)} favorite(s)")
 
     if filtered_favorites:
         for index, ex in enumerate(filtered_favorites):
             render_exercise_card(ex, index)
     else:
-        # Only show the message if there are favorites but none match the filter
-        if len(st.session_state.favorites) > 0:
+        if len(favorites) > 0:
             st.info("No favorites match the filters yet. Try adjusting your filters!")

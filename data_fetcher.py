@@ -346,3 +346,73 @@ def create_user_post(user_id, content, image=None):
     
     return new_post
 
+# Table name
+TABLE_NAME = "dreamteamproject-449421.DreamDataset.Favorites"
+
+def add_favorite(user_id, exercise):
+    """Add a favorite exercise to the BigQuery table."""
+    client = bigquery.Client(project=PROJECT_ID)
+    row = {
+        "UserId": user_id,
+        "Exercise": exercise
+    }
+
+    # Insert the row into BigQuery
+    try:
+        client.insert_rows_json(TABLE_NAME, [row])  # Send the exercise as a JSON record
+        print(f"Exercise {exercise['name']} added to favorites.")
+    except Exception as e:
+        print(f"Error adding favorite: {e}")
+
+def remove_favorite(user_id, exercise_name):
+    """Mark a favorite exercise as deleted in the BigQuery table."""
+    client = bigquery.Client(project=PROJECT_ID)
+
+    # Construct the UPDATE query to set IsDeleted to True for the given user and exercise
+    query = f"""
+    UPDATE `{TABLE_NAME}`
+    SET IsDeleted = TRUE
+    WHERE UserId = @user_id AND Exercise.name = @exercise_name AND IsDeleted = FALSE
+    """
+    
+    # Set up query parameters
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+            bigquery.ScalarQueryParameter("exercise_name", "STRING", exercise_name),
+        ]
+    )
+    
+    # Run the query to update the favorite
+    try:
+        client.query(query, job_config=job_config).result()  # Wait for query to finish
+        print(f"Exercise {exercise_name} marked as deleted from favorites.")
+    except Exception as e:
+        print(f"Error removing favorite: {e}")
+
+def get_user_favorites(user_id):
+    """Get all non-deleted favorite exercises for a user from BigQuery."""
+    client = bigquery.Client(project=PROJECT_ID)
+    
+    query = f"""
+    SELECT Exercise
+    FROM `{TABLE_NAME}`
+    WHERE UserId = @user_id AND IsDeleted = FALSE
+    """
+    
+    # Set up query parameters
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("user_id", "STRING", user_id),
+        ]
+    )
+    
+    # Execute the query and fetch the results
+    try:
+        result = client.query(query, job_config=job_config).result()  # Wait for query to finish
+        favorites = [row["Exercise"] for row in result]  # Extract the exercise JSON objects
+        return favorites
+    except Exception as e:
+        print(f"Error fetching favorites: {e}")
+        return []
+
