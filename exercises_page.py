@@ -79,7 +79,7 @@ def toggle_favorite(exercise):
         remove_favorite(user_id, exercise["name"])
     else:
         add_favorite(user_id, exercise)
-    st.rerun()  # Refresh the page
+    st.rerun()  # Refresh the page to update favorites
 
 def is_favorite(exercise_name):
     """Check if a given exercise is a favorite."""

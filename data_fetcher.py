@@ -370,9 +370,8 @@ def remove_favorite(user_id, exercise_name):
 
     # Construct the UPDATE query to set IsDeleted to True for the given user and exercise
     query = f"""
-    UPDATE `{TABLE_NAME}`
-    SET IsDeleted = TRUE
-    WHERE UserId = @user_id AND Exercise.name = @exercise_name AND IsDeleted = FALSE
+    DELETE FROM `{TABLE_NAME}`
+    WHERE UserId = @user_id AND Exercise.name = @exercise_name
     """
     
     # Set up query parameters
@@ -397,7 +396,7 @@ def get_user_favorites(user_id):
     query = f"""
     SELECT Exercise
     FROM `{TABLE_NAME}`
-    WHERE UserId = @user_id AND IsDeleted = FALSE
+    WHERE UserId = @user_id
     """
     
     # Set up query parameters
