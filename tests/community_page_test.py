@@ -17,15 +17,14 @@ from leaderboard_utils import (
     get_user_stats
 )
 
-#patches
+# Apply the patches at the class level
 @patch('google.cloud.bigquery.Client')
 @patch('vertexai.init')
 @patch('vertexai.generative_models.GenerativeModel')
-
 class TestLeaderboardUtils(unittest.TestCase):
     """Test cases for the leaderboard utility functions."""
 
-    def test_calculate_user_points(self):
+    def test_calculate_user_points(self, mock_gen_model, mock_vertex_init, mock_bq_client):
         """Test the calculation of user points based on workouts."""
         # Simply verify the function returns a valid result for each time period
         day_points = calculate_user_points('user1', 'day')
@@ -44,7 +43,7 @@ class TestLeaderboardUtils(unittest.TestCase):
         self.assertGreaterEqual(month_points, week_points)
         self.assertGreaterEqual(year_points, month_points)
     
-    def test_get_user_rankings(self):
+    def test_get_user_rankings(self, mock_gen_model, mock_vertex_init, mock_bq_client):
         """Test that user rankings are retrieved correctly for different time periods."""
         # Test for each time period
         for period in ['day', 'week', 'month', 'year']:
@@ -68,7 +67,7 @@ class TestLeaderboardUtils(unittest.TestCase):
                 self.assertIsInstance(rank['name'], str)
                 self.assertIsInstance(rank['points'], int)
     
-    def test_get_user_activity_metrics(self):
+    def test_get_user_activity_metrics(self, mock_gen_model, mock_vertex_init, mock_bq_client):
         """Test that activity metrics are retrieved correctly for different time periods."""
         # Test for each time period
         for period in ['day', 'week', 'month', 'year']:
@@ -90,7 +89,7 @@ class TestLeaderboardUtils(unittest.TestCase):
                 self.assertIsInstance(metric['miles'], float)
                 self.assertIsInstance(metric['points'], int)
     
-    def test_get_user_stats(self):
+    def test_get_user_stats(self, mock_gen_model, mock_vertex_init, mock_bq_client):
         """Test that user stats are retrieved correctly for different time periods."""
         # Test for each time period
         for period in ['day', 'week', 'month', 'year']:
@@ -112,6 +111,9 @@ class TestLeaderboardUtils(unittest.TestCase):
             self.assertIsInstance(stats['badges'], int)
 
 
+@patch('google.cloud.bigquery.Client')
+@patch('vertexai.init')
+@patch('vertexai.generative_models.GenerativeModel')
 class TestCommunityPageFunctions(unittest.TestCase):
     """Test cases for specific community page functions."""
     
@@ -124,7 +126,7 @@ class TestCommunityPageFunctions(unittest.TestCase):
         st.session_state.time_period = "Week"
         st.session_state.initialized = True
     
-    def test_toggle_view(self):
+    def test_toggle_view(self, mock_gen_model, mock_vertex_init, mock_bq_client):
         """Test that toggle_view correctly switches between leaderboard and activity views."""
         # Start with leaderboard view
         st.session_state.view_mode = "leaderboard"
@@ -139,7 +141,7 @@ class TestCommunityPageFunctions(unittest.TestCase):
             toggle_view()
             self.assertEqual(st.session_state.view_mode, "leaderboard")
     
-    def test_set_time_period(self):
+    def test_set_time_period(self, mock_gen_model, mock_vertex_init, mock_bq_client):
         """Test that set_time_period correctly updates the time period."""
         # Start with Week
         st.session_state.time_period = "Week"
@@ -155,6 +157,9 @@ class TestCommunityPageFunctions(unittest.TestCase):
         self.assertEqual(st.session_state.time_period, "Year")
 
 
+@patch('google.cloud.bigquery.Client')
+@patch('vertexai.init')
+@patch('vertexai.generative_models.GenerativeModel')
 # Integration-style test that doesn't actually render UI but checks flow
 class TestCommunityPageIntegration(unittest.TestCase):
     """Integration-style tests for the community page functionality."""
@@ -168,7 +173,7 @@ class TestCommunityPageIntegration(unittest.TestCase):
         st.session_state.time_period = "Week"
         st.session_state.initialized = True
     
-    def test_leaderboard_tab_flow(self):
+    def test_leaderboard_tab_flow(self, mock_gen_model, mock_vertex_init, mock_bq_client):
         """Test the overall flow of the leaderboard tab."""
         # Test switching view mode
         with patch('streamlit.rerun'):
