@@ -129,5 +129,53 @@ class TestDataFetcher(unittest.TestCase):
         self.assertTrue(result['post_id'].startswith('post_'))
         self.assertIn('timestamp', result)
 
+    @patch('data_fetcher.bigquery.Client')
+    def test_get_user_favorites(self, mock_bigquery_client):
+        """Tests get_user_favorites function."""
+        from data_fetcher import get_user_favorites
+
+        mock_client_instance = mock_bigquery_client.return_value
+        mock_query_job = mock_client_instance.query.return_value
+        mock_query_job.result.return_value = [
+            {"Exercise": {"name": "Push-Up", "type": "strength"}},
+            {"Exercise": {"name": "Jogging", "type": "cardio"}},
+        ]
+        
+        result = get_user_favorites("user1")
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0]['name'], "Push-Up")
+        self.assertEqual(result[1]['type'], "cardio")
+
+    @patch('data_fetcher.bigquery.Client')
+    def test_add_favorite(self, mock_bigquery_client):
+        """Tests add_favorite function."""
+        from data_fetcher import add_favorite
+
+        mock_client_instance = mock_bigquery_client.return_value
+        mock_client_instance.insert_rows_json.return_value = []  # Simulate no errors
+        
+        exercise = {"name": "Squat", "type": "strength"}
+        add_favorite("user1", exercise)
+        mock_client_instance.insert_rows_json.assert_called_once()
+        args, _ = mock_client_instance.insert_rows_json.call_args
+        self.assertEqual(args[1][0]['Exercise'], exercise)
+        self.assertEqual(args[1][0]['UserId'], "user1")
+
+    @patch('data_fetcher.bigquery.Client')
+    def test_remove_favorite(self, mock_bigquery_client):
+        """Tests remove_favorite function."""
+        from data_fetcher import remove_favorite
+
+        mock_client_instance = mock_bigquery_client.return_value
+        mock_query_job = mock_client_instance.query.return_value
+        mock_query_job.result.return_value = None  # Simulate success
+
+        remove_favorite("user1", "Deadlift")
+        mock_client_instance.query.assert_called_once()
+        called_query = mock_client_instance.query.call_args[0][0]
+        self.assertIn("DELETE FROM", called_query)
+        self.assertIn("Exercise.name = @exercise_name", called_query)
+
+
 if __name__ == '__main__':
     unittest.main()
