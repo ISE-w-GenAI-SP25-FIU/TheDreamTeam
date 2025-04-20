@@ -1,10 +1,7 @@
 import streamlit as st
 import requests
 import os
-from dotenv import load_dotenv
 from data_fetcher import get_user_favorites, add_favorite, remove_favorite
-
-load_dotenv()
 
 user_id = "user1"
 
