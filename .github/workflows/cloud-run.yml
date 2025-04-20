@@ -15,6 +15,7 @@ env:
   SERVICE_REGION: "us-central1"
   SERVICE_ACCOUNT: "86677331641-compute@developer.gserviceaccount.com" # TODO: update to your github service account
   WORKLOAD_IDENTITY_PROVIDER: "projects/86677331641/locations/global/workloadIdentityPools/github/providers/project-repo" #TODO: update to your workload identity provider
+  API_KEY: ${{ secrets.API_KEY }}
 
 jobs:
   py-checks:
