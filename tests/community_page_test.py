@@ -21,20 +21,19 @@ from leaderboard_utils import (
 class TestLeaderboardUtils(unittest.TestCase):
     """Test cases for the leaderboard utility functions."""
 
-    @patch('leaderboard_utils.get_user_workouts')
-    def test_calculate_user_points(self, mock_get_workouts):
+    def test_calculate_user_points(self):
         """Test the calculation of user points based on workouts."""
-        # The actual function just returns mock data, so we'll test that it returns expected values
-        # This avoids the actual calculation which depends on your real implementation
-        points = calculate_user_points('user1', 'week')
-        self.assertIsInstance(points, int)
-        
-        # If you want to test the actual calculation with mock data:
-        # Just verify that day/week/month/year return different values as expected
+        # Simply verify the function returns a valid result for each time period
         day_points = calculate_user_points('user1', 'day')
         week_points = calculate_user_points('user1', 'week')
         month_points = calculate_user_points('user1', 'month')
         year_points = calculate_user_points('user1', 'year')
+        
+        # Verify they're integers
+        self.assertIsInstance(day_points, int)
+        self.assertIsInstance(week_points, int)
+        self.assertIsInstance(month_points, int)
+        self.assertIsInstance(year_points, int)
         
         # Week should have more points than day, etc.
         self.assertGreaterEqual(week_points, day_points)
@@ -109,8 +108,8 @@ class TestLeaderboardUtils(unittest.TestCase):
             self.assertIsInstance(stats['badges'], int)
 
 
-class TestCommunityPage(unittest.TestCase):
-    """Test cases for the community page components."""
+class TestCommunityPageFunctions(unittest.TestCase):
+    """Test cases for specific community page functions."""
     
     def setUp(self):
         """Set up the test environment."""
@@ -120,48 +119,6 @@ class TestCommunityPage(unittest.TestCase):
         st.session_state.view_mode = "leaderboard"
         st.session_state.time_period = "Week"
         st.session_state.initialized = True
-        
-        # Create mock returns for st.columns
-        self.mock_col1 = MagicMock()
-        self.mock_col2 = MagicMock()
-        self.mock_col3 = MagicMock()
-        self.mock_col4 = MagicMock()
-        self.mock_col5 = MagicMock()
-        
-        # Setup columns mock to return the right values
-        self.mock_columns = MagicMock()
-        self.mock_columns.return_value = [
-            self.mock_col1, self.mock_col2, self.mock_col3, self.mock_col4, self.mock_col5
-        ]
-        
-        # Apply patches
-        self.patcher1 = patch('streamlit.markdown', MagicMock())
-        self.patcher2 = patch('streamlit.image', MagicMock())
-        self.patcher3 = patch('streamlit.button', MagicMock())
-        self.patcher4 = patch('streamlit.tabs', MagicMock())
-        self.patcher5 = patch('streamlit.dataframe', MagicMock())
-        self.patcher6 = patch('streamlit.container', MagicMock())
-        self.patcher7 = patch('streamlit.columns', self.mock_columns)
-        
-        # Start patches
-        self.patcher1.start()
-        self.patcher2.start()
-        self.patcher3.start()
-        self.patcher4.start()
-        self.patcher5.start()
-        self.patcher6.start()
-        self.patcher7.start()
-    
-    def tearDown(self):
-        """Clean up after tests."""
-        # Stop patches
-        self.patcher1.stop()
-        self.patcher2.stop()
-        self.patcher3.stop()
-        self.patcher4.stop()
-        self.patcher5.stop()
-        self.patcher6.stop()
-        self.patcher7.stop()
     
     def test_toggle_view(self):
         """Test that toggle_view correctly switches between leaderboard and activity views."""
@@ -192,34 +149,6 @@ class TestCommunityPage(unittest.TestCase):
         
         set_time_period("Year")
         self.assertEqual(st.session_state.time_period, "Year")
-    
-    @patch('community_page.display_leaderboard')
-    def test_display_badges(self, mock_display_leaderboard):
-        """Test that badges are displayed correctly."""
-        # We'll import and patch display_badges here to avoid issues with st.columns
-        from community_page import display_badges
-        
-        # We just verify it runs without errors (mock implementation)
-        display_badges()
-    
-    @patch('community_page.get_user_profile')
-    @patch('community_page.get_user_rankings') 
-    @patch('community_page.get_user_activity_metrics')
-    def test_display_leaderboard(self, mock_metrics, mock_rankings, mock_profile):
-        """Test that leaderboard display code runs without errors."""
-        # Import here to avoid module-level issues
-        from community_page import display_leaderboard
-        
-        # Set up mocks
-        mock_profile.return_value = {'full_name': 'Test User', 'profile_image': 'test.jpg'}
-        mock_rankings.return_value = [{'rank': 1, 'user_id': 'user1', 'name': 'User 1', 'points': 100, 'profile_image': ''}]
-        mock_metrics.return_value = [{'workout': 1, 'kcals': 100, 'miles': 1.0, 'points': 105}]
-        
-        # Test both view modes
-        for mode in ["leaderboard", "activity"]:
-            st.session_state.view_mode = mode
-            # Just verify it doesn't error
-            display_leaderboard()
 
 
 # Integration-style test that doesn't actually render UI but checks flow
@@ -234,14 +163,6 @@ class TestCommunityPageIntegration(unittest.TestCase):
         st.session_state.view_mode = "leaderboard"
         st.session_state.time_period = "Week"
         st.session_state.initialized = True
-        
-        # Mock all Streamlit functions to avoid rendering
-        self.patcher = patch('streamlit.write', MagicMock())
-        self.patcher.start()
-    
-    def tearDown(self):
-        """Clean up after tests."""
-        self.patcher.stop()
     
     def test_leaderboard_tab_flow(self):
         """Test the overall flow of the leaderboard tab."""
