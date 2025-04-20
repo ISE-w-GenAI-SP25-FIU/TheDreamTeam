@@ -17,6 +17,7 @@ Jernai Bennett
 Eric Brletic
 Alain Figueroa
 Euikyun Ko
+Rosana Josepha
 
 ## How to run the streamlit app
 
