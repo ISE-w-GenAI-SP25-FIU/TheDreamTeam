@@ -17,6 +17,10 @@ from leaderboard_utils import (
     get_user_stats
 )
 
+#patches
+@patch('google.cloud.bigquery.Client')
+@patch('vertexai.init')
+@patch('vertexai.generative_models.GenerativeModel')
 
 class TestLeaderboardUtils(unittest.TestCase):
     """Test cases for the leaderboard utility functions."""
