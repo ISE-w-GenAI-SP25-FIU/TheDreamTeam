@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_modal import Modal
 from modules import display_genai_advice, display_post
 from data_fetcher import get_genai_advice, get_user_profile, get_user_posts, users, get_user_workouts
 from leaderboard_utils import get_user_rankings, get_user_activity_metrics, get_user_stats
@@ -197,38 +198,119 @@ def display_badges():
     """Displays the badges section."""
     st.markdown("<h4>Badges</h4>", unsafe_allow_html=True)
     
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        st.markdown("""
-        <div style='background-color:#f0f2f6; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px;'>
-        🔥
-        </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div style='background-color:#f0f2f6; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px;'>
-        🏃
-        </div>
-        """, unsafe_allow_html=True)
-    with col3:
-        st.markdown("""
-        <div style='background-color:#f0f2f6; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px;'>
-        30
-        </div>
-        """, unsafe_allow_html=True)
-    with col4:
-        st.markdown("""
-        <div style='background-color:#f0f2f6; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px;'>
-        🎯
-        </div>
-        """, unsafe_allow_html=True)
-    with col5:
-        st.markdown("""
-        <div style='background-color:#f0f2f6; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px;'>
-        🏆
-        </div>
-        """, unsafe_allow_html=True)
+    # - Badge 1 -
+    modal1 = Modal("Congratulations :tada: :tada: :tada:", key="modal1")
 
+    # Show image
+    st.image("https://images.unsplash.com/photo-1744856950784-fe3032e1ceb4?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=110)
+
+    if st.button(":tada: View :tada:", key="button1"):
+        modal1.open()
+
+    # Modal content
+    if modal1.is_open():
+        with modal1.container():
+            col1, col2 = st.columns(2, gap="small")
+
+            with col1:
+                st.image("https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=700)
+
+            with col2:
+                st.write("## New Record ")
+                st.write("## Calories Burned :fire: ")
+                # st.markdown("#### New Record Calories Burned :fire: :thumbsup:")
+                # st.write("Here’s your record :clap:")
+
+    # - Badge 2 -
+    modal2 = Modal("Congratulations :tada: :tada: :tada:", key="modal2")
+
+    # Show image
+    st.image("https://images.unsplash.com/photo-1744856950907-a8d9102f1bfd?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=110)
+
+    if st.button(":tada: View :tada:", key="button2"):
+        modal2.open()
+
+    # Modal content
+    if modal2.is_open():
+        with modal2.container():
+            col1, col2 = st.columns(2, gap="small")
+
+            with col1:
+                st.image("https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=700)
+
+            with col2:
+                st.write("### 100 WORKOUT CHALLANGE COMPLETED ")
+                st.write("#### Keet it going :thumbsup: ")
+
+
+    # - Badge 3 -
+    modal3 = Modal("Congratulations :tada: :tada: :tada:", key="modal3")
+
+    # Show image
+    st.image("https://images.unsplash.com/photo-1744856951342-cb989cd667ae?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=110)
+
+    if st.button(":tada: View :tada:", key="button3"):
+        modal3.open()
+
+    # Modal content
+    if modal3.is_open():
+        with modal3.container():
+            col1, col2 = st.columns(2, gap="small")
+
+            with col1:
+                st.image("https://images.unsplash.com/photo-1562771242-a02d9090c90c?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=700)
+
+            with col2:
+                st.write("## 7 DAYS STREAK ")
+                st.write("### Congrats on working out")
+                st.write("### for 7days in a row :clap: ")
+
+    # - Badge 4 -
+    modal4 = Modal("Congratulations :tada: :tada: :tada:", key="modal4")
+
+    # Show image
+    st.image("https://images.unsplash.com/photo-1744856950904-12e217f0690a?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=110)
+
+    if st.button(":tada: View :tada:", key="button4"):
+        modal4.open()
+
+    # Modal content
+    if modal4.is_open():
+       with modal4.container():
+            col1, col2 = st.columns(2, gap="small")
+
+            with col1:
+                st.image("https://images.unsplash.com/photo-1607962837359-5e7e89f86776?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=700)
+
+            with col2:
+                st.write("## 30 DAYS STREAK ")
+                st.write("### Congrats on working out")
+                st.write("### for 30 days in a row :clap: ")
+
+    # - Badge 5 -
+    modal5 = Modal("Congratulations :tada: :tada: :tada:", key="modal5")
+
+    # Show image
+    st.image("https://images.unsplash.com/photo-1744856950752-2bc8ea70379d?q=80&w=2080&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=110)
+
+    if st.button(":tada: View :tada:", key="button5"):
+        modal5.open()
+
+    # Modal content
+    if modal5.is_open():
+        with modal5.container():
+            col1, col2 = st.columns(2, gap="small")
+
+            with col1:
+                st.image("https://images.unsplash.com/photo-1585473233369-14a97aa923df?q=80&w=2047&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", width=700)
+
+            with col2:
+                st.write("## LONGEST TIME EVER ")
+                st.write("### You're doing great :thumbsup: ")
+                st.write("### Don't stop :fire: ")
+
+
+    
 # Main community page
 st.title('Community')
 
@@ -236,14 +318,12 @@ st.title('Community')
 leaderboard_tab, feed_tab = st.tabs(["Leaderboard", "Social Feed"])
 
 with leaderboard_tab:
-    col1, col2 = st.columns([1, 1])
+    col1, col2, col3 = st.columns([0.4, 0.4, 0.2])
     
     with col1:
         # Display the leaderboard
         display_leaderboard()
         
-        # Display badges
-        display_badges()
     
     with col2:
         # User stats
@@ -264,6 +344,9 @@ with leaderboard_tab:
         # Motivational image
         st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Jumping-1461189_960_720.jpg/640px-Jumping-1461189_960_720.jpg", 
                 caption="Stay motivated!")
+    with col3:
+        # Display badges
+        display_badges()
 
 with feed_tab:
     # Display the existing social feed content
