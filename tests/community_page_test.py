@@ -1,4 +1,5 @@
 import unittest
+from streamlit_modal import Modal
 from unittest.mock import patch, MagicMock
 import pandas as pd
 import streamlit as st
