@@ -7,6 +7,9 @@
 
 from data_fetcher import get_user_workouts, get_user_profile, users
 import datetime
+from google.cloud import bigquery
+
+PROJECT_ID = "dreamteamproject-449421"
 
 def calculate_user_points(user_id, time_period="day"):
     """
@@ -83,39 +86,28 @@ def get_user_rankings(time_period="day"):
     Returns:
         List of dictionaries with user rankings, sorted by points
     """
-    # For more realistic data, let's create mock rankings with adjustments for time periods
-    if time_period == "day":
-        rankings = [
-            {"rank": 1, "user_id": "user1", "name": "Alot B.", "points": 301, "profile_image": ""},
-            {"rank": 2, "user_id": "user2", "name": "Blake S.", "points": 278, "profile_image": ""},
-            {"rank": 3, "user_id": "user3", "name": "Amelia J.", "points": 257, "profile_image": ""},
-            {"rank": 4, "user_id": "user4", "name": "Emmanuel K.", "points": 199, "profile_image": ""},
-            {"rank": 5, "user_id": "user5", "name": "Lisa C.", "points": 168, "profile_image": ""}
-        ]
-    elif time_period == "week":
-        rankings = [
-            {"rank": 1, "user_id": "user2", "name": "Blake S.", "points": 1204, "profile_image": ""},
-            {"rank": 2, "user_id": "user1", "name": "Alot B.", "points": 987, "profile_image": ""},
-            {"rank": 3, "user_id": "user5", "name": "Lisa C.", "points": 856, "profile_image": ""},
-            {"rank": 4, "user_id": "user3", "name": "Amelia J.", "points": 722, "profile_image": ""},
-            {"rank": 5, "user_id": "user4", "name": "Emmanuel K.", "points": 651, "profile_image": ""}
-        ]
-    elif time_period == "month":
-        rankings = [
-            {"rank": 1, "user_id": "user4", "name": "Emmanuel K.", "points": 4532, "profile_image": ""},
-            {"rank": 2, "user_id": "user2", "name": "Blake S.", "points": 3987, "profile_image": ""},
-            {"rank": 3, "user_id": "user5", "name": "Lisa C.", "points": 3624, "profile_image": ""},
-            {"rank": 4, "user_id": "user1", "name": "Alot B.", "points": 3219, "profile_image": ""},
-            {"rank": 5, "user_id": "user3", "name": "Amelia J.", "points": 2755, "profile_image": ""}
-        ]
-    else:  # year
-        rankings = [
-            {"rank": 1, "user_id": "user2", "name": "Blake S.", "points": 25432, "profile_image": ""},
-            {"rank": 2, "user_id": "user4", "name": "Emmanuel K.", "points": 21987, "profile_image": ""},
-            {"rank": 3, "user_id": "user3", "name": "Amelia J.", "points": 19624, "profile_image": ""},
-            {"rank": 4, "user_id": "user5", "name": "Lisa C.", "points": 18219, "profile_image": ""},
-            {"rank": 5, "user_id": "user1", "name": "Alot B.", "points": 17755, "profile_image": ""}
-        ]
+    
+    client = bigquery.Client(project=PROJECT_ID)
+
+    # Define the SQL query based on the time_period
+    query = f"""
+    SELECT rank, user_id, name, points, profile_image
+    FROM dreamteamproject-449421.DreamDataset.Leaderboard
+    WHERE time_period = @time_period
+    ORDER BY points DESC
+    """
+    # Run the query
+    query_params = [bigquery.ScalarQueryParameter("time_period", "STRING", time_period)]
+    query_job = client.query(query, job_config=bigquery.QueryJobConfig(query_parameters=query_params))
+
+    # Get the query results
+    results = query_job.result()
+
+    # Format the results into a list of dictionaries
+    rankings = [
+        {"rank": row.rank, "user_id": row.user_id, "name": row.name, "points": row.points, "profile_image": row.profile_image}
+        for row in results
+    ]
     
     return rankings
 
