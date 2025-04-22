@@ -19,7 +19,7 @@ from leaderboard_utils import (
 )
 
 # Apply the patches at the class level
-@patch('google.cloud.bigquery.Client')
+@patch('community_page.bigquery.Client')
 @patch('vertexai.init')
 @patch('vertexai.generative_models.GenerativeModel')
 class TestLeaderboardUtils(unittest.TestCase):
